@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { login } from "../api/UserAPI";
 
 const Login = () => {
     const [formValue, setformValue] = useState({
@@ -51,12 +52,20 @@ const Login = () => {
                 password: "",
 
             })
-            setAlert("Form submitted successfully!"); // Set alert message
-
-            // Automatically clear alert after 3 seconds
-            setTimeout(() => {
-                setAlert("");
-            }, 3000);
+            login(formValue)
+            .then(data=>{
+                if(data.error){
+                    alert(data.error)
+                }
+                else{
+                    setAlert("Form submitted successfully!"); // Set alert message
+        
+                    // Automatically clear alert after 3 seconds
+                    setTimeout(() => {
+                        setAlert("");
+                    }, 3000);
+                }
+            })
         }
 
     }
