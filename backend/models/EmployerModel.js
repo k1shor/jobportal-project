@@ -8,7 +8,7 @@ const employerSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true, trim: true },
     email: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true, trim: true },
-    role: { type: Number, default: 1 }, // 0: job-seeker, 1: employer
+    role: { type: Number, default: 0 }, // 0: job-seeker, 1: employer
     verified: { type: Boolean, default: false },
     date_of_birth: { type: Date, required: false },
     gender: { type: String, required: false },

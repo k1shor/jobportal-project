@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { findMyAccount, forgetPassword } from '../api/UserAPI'
+import { forgetPassword } from '../api/UserAPI'
 import Swal from 'sweetalert2'
 
 const ForgotPassword = () => {

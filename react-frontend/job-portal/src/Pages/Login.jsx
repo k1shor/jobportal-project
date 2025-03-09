@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { login } from "../api/UserAPI";
+import { authenticate, login } from "../api/UserAPI";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [formValue, setformValue] = useState({
@@ -9,16 +11,15 @@ const Login = () => {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
     const [alert, setAlert] = useState(false)
-    // handle change
+
+    const navigate = useNavigate()
+
     const handleChange = (e) => {
         const { name, value } = e.target
         setformValue({
             ...formValue,
             [name]: value
         })
-
-
-
     }
     // validate 
     const validate = () => {
@@ -46,26 +47,24 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            console.log("form submitted: ", formValue)
-            setformValue({
-                email: "",
-                password: "",
 
-            })
             login(formValue)
-            .then(data=>{
-                if(data.error){
-                    alert(data.error)
-                }
-                else{
-                    setAlert("Form submitted successfully!"); // Set alert message
-        
-                    // Automatically clear alert after 3 seconds
-                    setTimeout(() => {
+                .then(data => {
+                    if (data.error) {
+                        Swal.fire("Warning", data.error, "error")
+                    }
+                    else {
+                        setAlert("Form submitted successfully!"); // Set alert message
+                        setformValue({
+                            email: "",
+                            password: "",
+
+                        })
+                        navigate('/')
+                        authenticate(data)
                         setAlert("");
-                    }, 3000);
-                }
-            })
+                    }
+                })
         }
 
     }

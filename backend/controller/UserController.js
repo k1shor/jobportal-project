@@ -7,6 +7,7 @@ const sendEmailToUser = require('../middleware/emailSender');
 const jwt = require('jsonwebtoken');
 const { json } = require('express');
 const { expressjwt } = require('express-jwt');
+const UserModel = require('../models/UserModel');
 
 
 // user signup
@@ -38,8 +39,7 @@ exports.UserSighUp = async (req, res) => {
 
     // Store the user in the database
     user = await User.create({
-        first_name,
-        last_name,
+        fullName: `${first_name} ${last_name}`,
         username,
         email,
         password: hashedPassword, // Use the hashed password
@@ -144,7 +144,7 @@ exports.UserSighUp = async (req, res) => {
                 `;
 
     // Call the sendEmailToUser function to send the email
-    sendEmailToUser("noreply@something.com", email, "Verification Email", textContent, htmlContent)
+    sendEmailToUser("noreply@jobportal.com", email, "Verification Email", textContent, htmlContent)
 
 
     // Example usage:
@@ -157,11 +157,11 @@ exports.UserSighUp = async (req, res) => {
 // login to the user
 exports.UserLogin = async (req, res) => {
     try {
-        const { username, password } = req.body
+        const { email, password } = req.body
         // console.log(username, password)
 
         // check the username exist or not
-        let user = await User.findOne({ username: username })
+        let user = await User.findOne({ email: email })
         if (user) {
             // check the userpassword 
             bcrypt.compare(password, user.password, (error, result) => {
@@ -172,9 +172,9 @@ exports.UserLogin = async (req, res) => {
                     } else {
                         // save user details to the local storage
                         let { _id, username, role } = user
-                        const token = jwt.sign({ _id, role, username }, process.env.SECREAT_KEY, { expiresIn: '1h' })
+                        const token = jwt.sign({ _id, role, username }, process.env.SECRET_KEY, { expiresIn: '1h' })
                         res.cookie('user', token, { expire: Date.now() + 86400 })
-                        res.json({ token, success: "logged in success!" })
+                        res.json({ token, success: "logged in success!", user: {_id, username, role, email } })
                     }
 
 
@@ -555,13 +555,8 @@ exports.getProfile = async (req, res) => {
 
 // get profile info
 exports.profileInfo = async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const username = authHeader.split(' ')[1]
-
-    // fetch the data from the database for basic user details
-    const userDetails = await User.findOne({ username: username }, 'email first_name last_name email gender profile_picture')
-
-    return res.status(200).json(userDetails)
+    let user = await UserModel.findById(req.params.id)
+    return res.send(user)
 }
 
 
@@ -575,21 +570,21 @@ exports.isEmployer = async (req, res, next) => {
     try {
         const token = req.headers['authorization']?.split(' ')[1];
         if (!token) {
-            return res.status(400).json({error: "Access denied. No token provided."})
+            return res.status(400).json({ error: "Access denied. No token provided." })
         }
-        const decoded = await jwt.verify(token, process.env.SECREAT_KEY)
+        const decoded = await jwt.verify(token, process.env.SECRET_KEY)
         req.user = decoded;
         const user = await User.findById(decoded._id)
         if (!user) {
-            return res.status(400).json({error: "No user found."})
+            return res.status(400).json({ error: "No user found." })
         }
         if (user.role === 0) {
-            return res.status(401).json({error: "You don't have permission to perform this action."})
+            return res.status(401).json({ error: "You don't have permission to perform this action." })
         }
         next()
     } catch (e) {
         console.log(e)
-        return res.status(400).json({error: e.message})
+        return res.status(400).json({ error: e.message })
     }
 }
 
@@ -601,7 +596,7 @@ exports.uploadProfilePicture = async (req, res) => {
 
 
     if (!token) {
-        return res.status(400).json({error: "Access denied. No token provided."})
+        return res.status(400).json({ error: "Access denied. No token provided." })
     }
 
     try {
@@ -609,15 +604,15 @@ exports.uploadProfilePicture = async (req, res) => {
         const id = decoded._id;
 
 
-        let {profile_picture} = await User.findById(id)
+        let { profile_picture } = await User.findById(id)
             .select('profile_picture')
         console.log(profile_picture)
 
         if (profile_picture) {
-            try{
+            try {
                 fs.unlinkSync(profile_picture)
-            }catch (e) {
-                if(e.code !== 'ENOENT') {
+            } catch (e) {
+                if (e.code !== 'ENOENT') {
                     // execute if some other issue arise while deleting the file
                     console.log("ERROR: Failed to delete the profile picture")
                 }
@@ -625,12 +620,13 @@ exports.uploadProfilePicture = async (req, res) => {
                 console.log("Profile picture not found. Skip delete profile picture")
             }
         }
-        const user = await User.findByIdAndUpdate(id, {profile_picture: req.file.path}, {new: true})
+        const user = await User.findByIdAndUpdate(id, { profile_picture: req.file.path }, { new: true })
         if (!user) {
-            return res.status(400).json({error: "No user found."})
+            return res.status(400).json({ error: "No user found." })
         }
-        return res.status(200).json({success: true, data: user})
+        return res.status(200).json({ success: true, data: user })
     } catch (err) {
-        return res.status(400).json({error: err.message})
+        return res.status(400).json({ error: err.message })
     }
 }
+

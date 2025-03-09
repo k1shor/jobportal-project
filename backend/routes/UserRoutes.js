@@ -12,10 +12,10 @@ router.post('/forgetpassword', sendTokenToResetPassword)
 router.get('/resend-verification/:email', resendVerification)
 router.get("/verify-password-reset-token/:token", verifyTokenForPasswordChange)
 router.post("/change-password/:token", changePassword)
-router.post("/get-profile", getProfile)
+router.get("/get-profile/:id", getProfile)
 
 // profile information
-router.get('/profile-info', profileInfo)
+router.get('/profile-info/:id', profileInfo)
 
 // delete the token from the database
 router.post("/delete-token", deleteToken)

@@ -26,24 +26,6 @@ export const login = (user) => {
 }
 
 
-
-// find the account and send password reset link
-export const findMyAccount = (username) => {
-    return fetch(`${API}/forgetpassword`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username })
-    })
-        .then(response => {
-            return response.json()
-        })
-        .catch(error => {
-            console.log("Error: ", error);
-        })
-}
-
 export const forgetPassword = (username) => {
     return fetch(`${API}/forgetpassword`, {
         method: "POST",
@@ -72,6 +54,7 @@ export const verifyTokenForResetPassword = (token) => {
             console.log("Error:", error)
         })
 }
+
 // change the password of user
 export const changePassword = (password, token) => {
     return fetch(`${API}/change-password/${token}`, {
@@ -91,7 +74,6 @@ export const changePassword = (password, token) => {
 
 
 export const authenticate = (data) => {
-    console.log(data)
     localStorage.setItem('jwt', JSON.stringify(data))
 }
 
@@ -111,22 +93,17 @@ export const verifyEmail = (token) => {
         })
 }
 
-export const loggedInUser = () => {
-    const token = localStorage.getItem('user');
-}
 
 export const isAuthenticated = () => {
     return localStorage.getItem('jwt') ? JSON.parse(localStorage.getItem('jwt')) : false
 }
 
 // get profile information
-export const getProfile = (token) => {
-    return fetch(`${API}/get-profile`, {
-        method: "POST",
+export const getProfile = (token, id) => {
+    return fetch(`${API}/get-profile/${id}`, {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ token })
     })
         .then(response => response.json())
         .catch(error => console.log("Error: " + error))
