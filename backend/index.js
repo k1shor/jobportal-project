@@ -45,6 +45,7 @@ app.use('/public/vacancy', express.static(path.join(__dirname, 'public/vacancy')
 
 // server the static file resume.pdf
 app.use('/public/resume', express.static(path.join(__dirname, 'public/resume')))
+app.use('/public/profile', express.static('public/profile'))
 
 
 

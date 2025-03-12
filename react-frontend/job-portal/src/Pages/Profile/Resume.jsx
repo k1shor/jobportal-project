@@ -1,9 +1,11 @@
 import React from 'react';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { API } from '../../config';
 
-const Resume = () => {
-
+const Resume = ({ user }) => {
+    console.log(user)
+let {username, firstname, lastname, email, profile_picture} = user
     // function to download the resume as PDF
     const downloadPDF = async () => {
         const element = document.getElementById("user-details"); // ID of the element to capture
@@ -16,7 +18,7 @@ const Resume = () => {
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save("user-details.pdf");
+        pdf.save(`${fullname || firstname}.png`);
     };
 
     // main function return statement
@@ -30,17 +32,21 @@ const Resume = () => {
                             <div className="flex items-center space-x-4">
                                 <img
                                     // src={'/pp.jpg'}
-                                    src="http://localhost:5000/profile/default.png"
-                                    alt="Profile"
+                                    src={profile_picture?"http://localhost:5000/profile/default.png":`${API}/${profile_picture}`}
+                                    alt={user.fullname}
                                     className="w-24 h-24 rounded-full border-4 border-white "
                                     onLoad={() => console.log('Image loaded!')} // Ensure image is loaded
                                 />
                                 <div className="text-white">
                                     <h1 className="text-2xl font-bold">
-                                        <span>{'Gaurav'}</span>
-                                        <span> {'Kushwaha'}</span>
+                                        { (firstname || lastname) ? <>
+                                            <span>{firstname }</span>
+                                            <span> {lastname  }</span>
+                                        </>:
+                                        <>{username}</>
+                                        }
                                     </h1>
-                                    <p className="text-sm opacity-80">{'rockymoderator@gmail.com'}</p>
+                                    <p className="text-sm opacity-80">{email}</p>
                                 </div>
                             </div>
                         </div>

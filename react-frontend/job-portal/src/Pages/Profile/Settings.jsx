@@ -1,19 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { isAuthenticated, updateProfile } from "../../api/UserAPI";
 
-function Setting() {
+const Setting = ({ user }) => {
     const [formData, setFormData] = useState({
-        email: "",
+        fullName: "",
+        phone: "",
+        bio: "",
         password: "",
+        date_of_birth: "",
+        gender: "",
+        profilePicture: ""
     });
+    console.log(formData.dateOfBirth)
+
+    const { token } = isAuthenticated()
+    useEffect(() => {
+        // Simulating fetching user data from an API or local storage
+        const savedData = user || {};
+        setFormData((prevData) => ({ ...prevData, ...savedData }));
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setFormData({ ...formData, profilePicture: file });
+    };
+
     const handleSave = () => {
         console.log("Settings saved:", formData);
-        alert("Your settings have been saved.");
+        let info = new FormData()
+        for (var key in formData) {
+            info.append(key, formData[key])
+        }
+
+        updateProfile(token, info)
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error)
+                }
+                else {
+                    alert("Your settings have been saved.");
+                }
+            })
     };
 
     return (
@@ -21,25 +53,71 @@ function Setting() {
             <h2 className="text-xl font-bold mb-4">Settings</h2>
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="email" className="block font-medium text-gray-700">
-                        Email
-                    </label>
+                    <label className="block font-medium text-gray-700">Full Name</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        type="text"
+                        name="fullName"
+                        value={formData.fullName}
                         onChange={handleInputChange}
                         className="mt-1 p-2 block w-full border rounded-md"
                     />
                 </div>
                 <div>
-                    <label htmlFor="password" className="block font-medium text-gray-700">
-                        Password
-                    </label>
+                    <label className="block font-medium text-gray-700">Phone Number</label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="mt-1 p-2 block w-full border rounded-md"
+                    />
+                </div>
+                <div>
+                    <label className="block font-medium text-gray-700">Bio</label>
+                    <textarea
+                        name="bio"
+                        value={formData.bio}
+                        onChange={handleInputChange}
+                        className="mt-1 p-2 block w-full border rounded-md"
+                    ></textarea>
+                </div>
+                <div>
+                    <label className="block font-medium text-gray-700">Date of Birth</label>
+                    <input
+                        type="date"
+                        name="date_of_birth"
+                        value={formData.date_of_birth.toString().split("T")[0]}
+                        onChange={handleInputChange}
+                        className="mt-1 p-2 block w-full border rounded-md"
+                    />
+                </div>
+                <div>
+                    <label className="block font-medium text-gray-700">Gender</label>
+                    <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleInputChange}
+                        className="mt-1 p-2 block w-full border rounded-md"
+                    >
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="block font-medium text-gray-700">Profile Picture</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="mt-1 p-2 block w-full border rounded-md"
+                    />
+                </div>
+                <div>
+                    <label className="block font-medium text-gray-700">Password</label>
                     <input
                         type="password"
-                        id="password"
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}

@@ -1,5 +1,6 @@
 // JobPostings.js
 import React from 'react';
+import JobPostingForm from './JobPostingForm';
 
 const JobPostings = () => {
   const jobPostings = [
@@ -43,6 +44,7 @@ const JobPostings = () => {
           </tbody>
         </table>
       </div>
+      <JobPostingForm/>
     </div>
   );
 };

@@ -99,24 +99,27 @@ export const isAuthenticated = () => {
 }
 
 // get profile information
-export const getProfile = (token, id) => {
-    return fetch(`${API}/get-profile/${id}`, {
+export const getProfile = (token) => {
+    return fetch(`${API}/get-profile`, {
+        method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
         },
+        body: JSON.stringify({ token })
     })
         .then(response => response.json())
         .catch(error => console.log("Error: " + error))
 }
 
-export const profileInfo = (token) => {
-    return fetch(`${API}/profile-info`, {
+export const updateProfile = (token, user) => {
+    return fetch(`${API}/updateprofile`, {
+        method: "PUT",
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`
         },
-
+        body: (user)
     })
-        .then(res => res.json())
-        .catch(err => console.log(err));
+        .then(response => response.json())
+        .catch(error => console.log("Error: " + error))
 }

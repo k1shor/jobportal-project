@@ -2,12 +2,11 @@ const Token = require('../models/TokenModel');
 const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto')
-const nodemailer = require('nodemailer');
 const sendEmailToUser = require('../middleware/emailSender');
 const jwt = require('jsonwebtoken');
-const { json } = require('express');
 const { expressjwt } = require('express-jwt');
 const UserModel = require('../models/UserModel');
+const fs = require('fs')
 
 
 // user signup
@@ -144,7 +143,8 @@ exports.UserSighUp = async (req, res) => {
                 `;
 
     // Call the sendEmailToUser function to send the email
-    sendEmailToUser("noreply@jobportal.com", email, "Verification Email", textContent, htmlContent)
+    // sendEmailToUser("noreply@jobportal.com", email, "Verification Email", textContent, htmlContent)
+    sendEmailToUser("k1shor.mkar@gmail.com", email, "Verification Email", textContent, htmlContent)
 
 
     // Example usage:
@@ -172,9 +172,9 @@ exports.UserLogin = async (req, res) => {
                     } else {
                         // save user details to the local storage
                         let { _id, username, role } = user
-                        const token = jwt.sign({ _id, role, username }, process.env.SECRET_KEY, { expiresIn: '1h' })
+                        const token = jwt.sign({ _id, role, username }, process.env.SECRET_KEY, { expiresIn: '24h' })
                         res.cookie('user', token, { expire: Date.now() + 86400 })
-                        res.json({ token, success: "logged in success!", user: {_id, username, role, email } })
+                        res.json({ token, success: "logged in success!", user: { _id, username, role, email } })
                     }
 
 
@@ -342,7 +342,7 @@ exports.resendVerification = async (req, res) => {
 // require admin
 exports.requireAdmin = (req, res, next) => {
     expressjwt({
-        secret: process.env.SECREAT_KEY,
+        secret: process.env.SECRET_KEY,
         algorithms: ['HS256'],
         userProperty: 'auth'
     })(req, res, err => {
@@ -535,29 +535,16 @@ exports.deleteToken = async (req, res) => {
 
 // get profile information
 exports.getProfile = async (req, res) => {
-
     const { token } = req.body
-    console.log(token)
-
-    if (!token) {
-        return res.status(400).json({ error: "Token not found!" })
-    }
-
     try {
-        const decoded = jwt.verify(token, process.env.SECREAT_KEY)
-        return res.status(200).json({ username: decoded.username })
-        console.log(decoded)
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
+        let user = await User.findById(decoded._id)
+        return res.send(user)
     } catch (err) {
         return res.status(400).json({ error: "Invalid token" })
     }
-    res.status(200).json({ success: token })
 }
 
-// get profile info
-exports.profileInfo = async (req, res) => {
-    let user = await UserModel.findById(req.params.id)
-    return res.send(user)
-}
 
 
 // details: education, experience, language, reference, tranning, skillset,
@@ -600,7 +587,7 @@ exports.uploadProfilePicture = async (req, res) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECREAT_KEY)
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
         const id = decoded._id;
 
 
@@ -630,3 +617,38 @@ exports.uploadProfilePicture = async (req, res) => {
     }
 }
 
+exports.updateProfile = async (req, res) => {
+    console.log(req.body)
+    const { first_name, last_name, date_of_birth, gender, password, bio, phone } = req.body
+
+    let token = await req.headers.authorization
+    token = await token.split(" ")[1]
+    const { _id } = jwt.verify(token, process.env.SECRET_KEY)
+    let user = await UserModel.findById(_id)
+    user.fullName = (first_name || last_name) ? `${first_name} ${last_name}` : user.fullName
+    user.first_name = first_name ? first_name : user.first_name
+    user.last_name = last_name ? last_name : user.last_name
+    user.date_of_birth = date_of_birth ? date_of_birth : user.date_of_birth
+    user.gender = gender ? gender : user.gender
+    user.bio = bio ? bio : user.bio
+    user.phone = phone ? phone : user.phone
+    if (req.file) {
+        if (user.profile_picture) {
+            fs.unlinkSync(user.profile_picture)
+        }
+        user.profile_picture = req.file?.path
+    }
+    if (password != user.password) {
+        let salt = await bcrypt.genSalt(10)
+        let hashedPassword = await bcrypt.hash(password, salt)
+        user.password = hashedPassword
+    }
+
+    user = await user.save()
+    if (!user) {
+        return res.status(400).json({ error: "Something went wrong" })
+    }
+    res.send({ message: "User Profile Updated Successfully" })
+
+    // console.log(user)
+}

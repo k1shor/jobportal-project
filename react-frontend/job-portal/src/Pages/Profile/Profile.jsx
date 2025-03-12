@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { getProfile, isAuthenticated, profileInfo } from '../../api/UserAPI';  // Assuming these are your API functions
+import { getProfile, isAuthenticated } from '../../api/UserAPI';  // Assuming these are your API functions
 import Overview from './Overview';
 import Posts from './Posts';
 import Setting from './Settings';
 import Resume from './Resume';
 
 const Profile = () => {
-    const [username, setUsername] = useState('');
-    const [userDetails, setUserDetails] = useState(null);
+    const [user, setUser] = useState('');
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
 
-    const {token, user} = isAuthenticated()
+    const {token} = isAuthenticated()
 
     // This will extract the username from token in localStorage
     useEffect(() => {
         if (token) {
-            getProfile(token, user._id)
+            getProfile(token)
                 .then((res) => {
-                    setUsername(res.username);
+                    console.log(res)
+                    setUser(res);
+                    setLoading(false)
                 })
                 .catch((err) => {
                     console.error(err);
@@ -26,21 +27,7 @@ const Profile = () => {
         }
     }, []);
 
-    // Fetch basic profile information after username is extracted
-    useEffect(() => {
-        if (username) {
-            setLoading(true);
-            profileInfo(username)
-                .then((res) => {
-                    setUserDetails(res);
-                    setLoading(false);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    setLoading(false);
-                });
-        }
-    }, [username]);
+    
 
 
 
@@ -61,16 +48,15 @@ const Profile = () => {
                     <div className="bg-gradient-to-r from-red-400 to-red-600 p-6">
                         <div className="flex items-center space-x-4">
                             <img
-                                src={userDetails.profilePicture || "http://localhost:5000/profile/default.png"}  // Dynamic image URL or fallback
+                                src={user?.profile_picture ? user.profile_picture : "http://localhost:5000/profile/default.png"}  // Dynamic image URL or fallback
                                 alt="Profile"
                                 className="w-24 h-24 rounded-full border-4 border-white"
                             />
                             <div className="text-white">
                                 <h1 className="text-2xl font-bold">
-                                    <span>{userDetails.first_name.charAt(0).toUpperCase() + userDetails?.first_name.slice(1) + " "}</span>
-                                    <span>{userDetails.last_name.charAt(0).toUpperCase() + userDetails?.last_name.slice(1)}</span>
+                                    
                                 </h1>
-                                <p className="text-sm opacity-80">{userDetails.email}</p>
+                                <p className="text-sm opacity-80">{user?.email}</p>
                             </div>
                         </div>
                     </div>
@@ -89,10 +75,10 @@ const Profile = () => {
                     </div>
 
                     {/* Dynamic Content Based on Active Tab */}
-                    {activeTab === 'overview' && <Overview />}
+                    {activeTab === 'overview' && <Overview user= {user} />}
                     {activeTab === 'posts' && <Posts />}
-                    {activeTab === 'setting' && <Setting />}
-                    {activeTab === 'resume' && <Resume />}
+                    {activeTab === 'setting' && <Setting user = {user}/>}
+                    {activeTab === 'resume' && <Resume user = {user} />}
                 </div>
             </div>
     );

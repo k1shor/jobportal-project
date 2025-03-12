@@ -1,7 +1,9 @@
 const { UserSighUp, UserLogin, verifyUser, resendVerification, verifyTokenForPasswordChange, changePassword, sendTokenToResetPassword, deleteToken,
     getProfile,
-    profileInfo
+    profileInfo,
+    updateProfile
 } = require('../controller/UserController')
+const profileUpload = require('../middleware/profileUpload')
 
 const router = require('express').Router()
 
@@ -12,10 +14,10 @@ router.post('/forgetpassword', sendTokenToResetPassword)
 router.get('/resend-verification/:email', resendVerification)
 router.get("/verify-password-reset-token/:token", verifyTokenForPasswordChange)
 router.post("/change-password/:token", changePassword)
-router.get("/get-profile/:id", getProfile)
+router.post("/get-profile", getProfile)
 
-// profile information
-router.get('/profile-info/:id', profileInfo)
+router.put('/updateprofile', profileUpload.single('profilePicture'), updateProfile)
+
 
 // delete the token from the database
 router.post("/delete-token", deleteToken)
