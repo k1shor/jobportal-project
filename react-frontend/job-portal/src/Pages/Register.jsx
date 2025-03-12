@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { register } from "../api/UserAPI";
+import { Link } from "react-router-dom";
 
 // state variable for the field
 export default function Register() {
@@ -12,9 +13,10 @@ export default function Register() {
         password: "",
         confirmPassword: "",
         gender: "",
-        date_of_birth: ""
+        date_of_birth: "",
+        role: ""  // Added role field
+    });
 
-    })
     // state variable to show the error message
     const [error, setError] = useState({
         first_name: "",
@@ -23,8 +25,10 @@ export default function Register() {
         email: "",
         password: "",
         gender: "",
-        date_of_birth: ""
-    })
+        date_of_birth: "",
+        role: ""  // Added role field for error handling
+    });
+
     // handle change function
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,16 +36,17 @@ export default function Register() {
         setformValue({
             ...formValue,
             [name]: value
-        })
+        });
         // check for error
         setError({
             ...error,
             [name]: ""
-        })
-    }
+        });
+    };
+
     // validate 
     const validate = () => {
-        const newErrors = { first_name: "", last_name: "", username: "", email: "", password: "", gender: "", date_of_birth: "" };
+        const newErrors = { first_name: "", last_name: "", username: "", email: "", password: "", gender: "", date_of_birth: "", role: "" };
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!formValue.username.trim()) {
@@ -61,8 +66,8 @@ export default function Register() {
             newErrors.password = "Password must be at least 6 characters.";
         }
 
-        if (formValue.password != formValue.confirmPassword) {
-            newErrors.password = "Password must be the same"
+        if (formValue.password !== formValue.confirmPassword) {
+            newErrors.password = "Password must be the same";
         }
         // check gender selection
         if (!formValue.gender) {
@@ -73,59 +78,59 @@ export default function Register() {
         if (!formValue.date_of_birth) {
             newErrors.date_of_birth = "Please select your date of birth";
         }
+
+        // check for role selection
+        if (!formValue.role) {
+            newErrors.role = "Please select a role.";
+        }
+
         setError(newErrors);
         return !Object.values(newErrors).some((error) => error);
-
-    }
+    };
 
     // handle submit
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
             register(formValue)
-                .then(data => {
+                .then((data) => {
                     if (data.error) {
-                        setAlert(data.error)
-                    }
-                    else {
-                        setAlert('User Registered Successfully')
+                        setAlert(data.error);
+                    } else {
+                        setAlert('User Registered Successfully');
                         setformValue({
+                            first_name: "",
+                            last_name: "",
                             username: "",
                             email: "",
                             password: "",
-                            confirmPassword: ""
-                        })
+                            confirmPassword: "",
+                            gender: "",
+                            date_of_birth: "",
+                            role: ""  // Clear role field
+                        });
                     }
-                })
+                });
         }
-    }
+    };
+
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             {alert && (
-                <div className="fixed top-12 left-1/2 transform -translate-x-1/2 bg-green-400 text-white px-10 py-2 text-2xl font-semibold  rounded-lg shadow-md">
+                <div className="fixed top-12 left-3/4 transform -translate-x-1/2 bg-green-400 text-white px-10 py-2 text-2xl font-semibold rounded-lg shadow-md">
                     {alert}
-                </div>)}
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img
-                    className="mx-auto h-10 w-auto"
-                    src="/logo.jpg"
-                    alt="Your Company"
-                />
-                <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
-                    Register Your Account
-                </h2>
+                </div>
+            )}
+            <div className="sm:mx-auto sm:w-full sm:max-w-sm w-11/12 md:w-4/5 lg:w-3/5 mx-auto">
+                <img className="mx-auto h-20 rounded-3xl w-auto" src="/favicon.webp" alt="Company Logo" />
+                <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">Register Your Account</h2>
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" action="#" onSubmit={handleSubmit} method="POST">
+                <form className="space-y-6" onSubmit={handleSubmit} method="POST">
                     {/* first name */}
                     <div>
-                        <label
-                            htmlFor="first_name"
-                            className="block text-sm font-medium text-gray-900"
-                        >
-                            First Name:
-                        </label>
+                        <label htmlFor="first_name" className="block text-sm font-medium text-gray-900">First Name:</label>
                         <div className="mt-2">
                             <input
                                 id="first_name"
@@ -134,7 +139,6 @@ export default function Register() {
                                 value={formValue.first_name}
                                 onChange={handleChange}
                                 autoComplete="first_name"
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
@@ -143,12 +147,7 @@ export default function Register() {
 
                     {/* last name */}
                     <div>
-                        <label
-                            htmlFor="last_name"
-                            className="block text-sm font-medium text-gray-900"
-                        >
-                            last_name
-                        </label>
+                        <label htmlFor="last_name" className="block text-sm font-medium text-gray-900">Last Name:</label>
                         <div className="mt-2">
                             <input
                                 id="last_name"
@@ -157,23 +156,15 @@ export default function Register() {
                                 value={formValue.last_name}
                                 onChange={handleChange}
                                 autoComplete="last_name"
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
                         {error.last_name && <p className="text-red-500 text-sm">{error.last_name}</p>}
-
                     </div>
-
 
                     {/* username */}
                     <div>
-                        <label
-                            htmlFor="username"
-                            className="block text-sm font-medium text-gray-900"
-                        >
-                            Username
-                        </label>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-900">Username</label>
                         <div className="mt-2">
                             <input
                                 id="username"
@@ -182,20 +173,15 @@ export default function Register() {
                                 value={formValue.username}
                                 onChange={handleChange}
                                 autoComplete="username"
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
-                        {error.email && <p className="text-red-500 text-sm">{error.username}</p>}
-
+                        {error.username && <p className="text-red-500 text-sm">{error.username}</p>}
                     </div>
+
+                    {/* email */}
                     <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-900"
-                        >
-                            Email address
-                        </label>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-900">Email address</label>
                         <div className="mt-2">
                             <input
                                 id="email"
@@ -204,22 +190,16 @@ export default function Register() {
                                 autoComplete="email"
                                 value={formValue.email}
                                 onChange={handleChange}
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
                         {error.email && <p className="text-red-500 text-sm">{error.email}</p>}
                     </div>
 
+                    {/* password */}
                     <div>
                         <div className="flex items-center justify-between">
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Password
-                            </label>
-
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-900">Password</label>
                         </div>
                         <div className="mt-2">
                             <input
@@ -228,22 +208,16 @@ export default function Register() {
                                 type="password"
                                 value={formValue.password}
                                 onChange={handleChange}
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
                         {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
                     </div>
 
+                    {/* confirm password */}
                     <div>
                         <div className="flex items-center justify-between">
-                            <label
-                                htmlFor="confirmPassword"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Confirm Password
-                            </label>
-
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900">Confirm Password</label>
                         </div>
                         <div className="mt-2">
                             <input
@@ -252,24 +226,16 @@ export default function Register() {
                                 type="password"
                                 value={formValue.confirmPassword}
                                 onChange={handleChange}
-
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
                             />
                         </div>
                         {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
-
                     </div>
-
 
                     {/* gender */}
                     <div>
                         <div className="flex items-center justify-between">
-                            <label
-                                htmlFor="gender"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Gender
-                            </label>
+                            <label htmlFor="gender" className="block text-sm font-medium text-gray-900">Gender</label>
                         </div>
                         <div className="mt-2">
                             <select
@@ -287,15 +253,10 @@ export default function Register() {
                         {error.gender && <p className="text-red-500 text-sm">{error.gender}</p>}
                     </div>
 
-                    {/* DATE OF BIRTH */}
+                    {/* date of birth */}
                     <div>
                         <div className="flex items-center justify-between">
-                            <label
-                                htmlFor="date_of_birth"
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Date of Birth
-                            </label>
+                            <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-900">Date of Birth</label>
                         </div>
                         <div className="mt-2">
                             <input
@@ -310,30 +271,47 @@ export default function Register() {
                         {error.date_of_birth && <p className="text-red-500 text-sm">{error.date_of_birth}</p>}
                     </div>
 
+                    {/* role */}
+                    <div>
+                        <div className="flex items-center justify-between">
+                            <label htmlFor="role" className="block text-sm font-medium text-gray-900">Role</label>
+                        </div>
+                        <div className="mt-2">
+                            <select
+                                id="role"
+                                name="role"
+                                value={formValue.role}
+                                onChange={handleChange}
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm pl-1"
+                            >
+                                <option value="">Select Role</option>
+                                <option value={0}>User</option>
+                                <option value={1}>Company</option>
+                            </select>
+                        </div>
+                        {error.role && <p className="text-red-500 text-sm">{error.role}</p>}
+                    </div>
 
-
+                    {/* Submit button */}
                     <div>
                         <button
                             type="submit"
-                            onClick={handleSubmit}
-                            className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
-                            Sign in
+                            Register
                         </button>
                     </div>
                 </form>
-
-                <p className="mt-10 text-center text-base text-gray-500 ">
+                <p className="mt-5 text-center text-base text-gray-500 ">
                     <span>Already a member </span>
-                    <a
-                        href="/login"
+                    <Link
+                        to="/login"
                         className="font-semibold text-blue-600 hover:text-blue-500 transition-all duration-500 ease-in-out transform hover:scale-110 hover:text-xl"
                     >
-                        Login
-                    </a>
+                        Login now
+                    </Link>
                 </p>
             </div>
         </div>
     );
 }
-

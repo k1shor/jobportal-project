@@ -11,3 +11,4 @@ export const getVacancyDetails = (id) => {
         .then(response => response.json())
         .catch(error => console.log(error))
 }
+

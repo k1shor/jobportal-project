@@ -8,7 +8,7 @@
     @apply w-full my-3 outline-2 border-2 rounded-full py-1 px-4;
 }
 a:hover{
-    @apply bg-main text-white px-2;
+    @apply bg-main text-white;
 }
 
 .primary-btn{

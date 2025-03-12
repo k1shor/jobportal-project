@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { API } from "../config"
 
 export const register = (user) => {
@@ -119,6 +120,27 @@ export const updateProfile = (token, user) => {
             Authorization: `Bearer ${token}`
         },
         body: (user)
+    })
+        .then(response => response.json())
+        .catch(error => console.log("Error: " + error))
+}
+
+export const getCompanies = () => {
+    return fetch(`${API}/getcompanies`)
+        .then(response => response.json())
+        .catch(error => console.log("Error: " + error))
+}
+
+export const logout = () => {
+    localStorage.removeItem('jwt');
+    // window.location.reload()
+}
+
+export const getRole = (token) => {
+    return fetch(`${API}/getRole`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
     })
         .then(response => response.json())
         .catch(error => console.log("Error: " + error))

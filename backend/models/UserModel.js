@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: Number,
         default: 0
-        // 0 is normal user && 1 is admin.
+        // 0 is normal user && 1 is company, 2 is admin, 
     },
     verified: {
         type: Boolean,

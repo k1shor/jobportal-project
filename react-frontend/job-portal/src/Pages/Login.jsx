@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { authenticate, login } from "../api/UserAPI";
+import { authenticate, isAuthenticated, login } from "../api/UserAPI";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [formValue, setformValue] = useState({
@@ -11,6 +11,8 @@ const Login = () => {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
     const [alert, setAlert] = useState(false)
+
+    const {token} = isAuthenticated()
 
     const navigate = useNavigate()
 
@@ -69,11 +71,14 @@ const Login = () => {
 
     }
     return (
+        <>
+            {token && <Navigate to={'/'}/>}
+        
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
-                    className="mx-auto h-10 w-auto"
-                    src="/logo.png"
+                    className="mx-auto h-20 rounded-3xl w-auto"
+                    src="/favicon.webp"
                     alt="Your Company"
                 />
                 <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
@@ -147,15 +152,16 @@ const Login = () => {
 
                 <p className="mt-10 text-center text-base text-gray-500 ">
                     <span>Not a member </span>
-                    <a
-                        href="/register"
+                    <Link
+                        to="/register"
                         className="font-semibold text-blue-600 hover:text-blue-500 transition-all duration-500 ease-in-out transform hover:scale-110 hover:text-xl"
                     >
                         register now
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>
+        </>
     );
 }
 

@@ -14,13 +14,14 @@ import Setting from './Pages/Profile/Settings'
 import ServicePage from './Pages/ServicePage'
 import JobsPage from './Pages/JobsPage'
 import JobDetailsPage from './Pages/JobDetailsPage'
-import RecruitersPage from './Pages/RecruitersPage'
 import Candidates from './Pages/Recruiters/Candidates'
 import RecruitersLayout from './Layout/Recruiter/RecruitersLayout'
 import RecruitersDashboard from './Pages/Recruiters/RrecuitersDashboard'
 import Applications from './Pages/Recruiters/Applications'
 import JobPostings from './Pages/Recruiters/JobPostings'
 import Settings from './Pages/Recruiters/Settings'
+import Companies from './Pages/Companies'
+import RecruitersRoute from './protectedRoutes.jsx/RecruitersRoute'
 
 const MyRoutes = () => {
     return (
@@ -37,7 +38,7 @@ const MyRoutes = () => {
                     <Route path='services' element={<ServicePage />} />
                     <Route path='jobs' element={<JobsPage />} />
                     <Route path='jobs/:id' element={<JobDetailsPage />} />
-                    <Route path='companies' element={<RecruitersPage />} />
+                    <Route path='company' element={<Companies />} />
 
 
 
@@ -47,14 +48,15 @@ const MyRoutes = () => {
                     <Route path='/profile/resume' element={<Resume />} />
                     <Route path='/profile/settings' element={<Setting />} />
                 </Route>
+                <Route path='/' element={<RecruitersLayout />}>
+                    <Route path='recruiters' element={<RecruitersRoute />}>
+                        <Route index element={<RecruitersDashboard />} />
+                        <Route path='candidates' element={<Candidates />} />
+                        <Route path='applications' element={<Applications />} />
+                        <Route path='job-postings' element={<JobPostings />} />
+                        <Route path='settings' element={<Settings />} />
 
-                <Route path='/recruiters' element={<RecruitersLayout />}>
-                    <Route path='dashboard' element = {<RecruitersDashboard/>}/>
-                    <Route path='candidates' element={<Candidates />} />
-                    <Route path='applications' element = {<Applications/>}/>
-                    <Route path='job-postings' element = {<JobPostings/>}/>
-                    <Route path='settings' element = {<Settings/>}/>
-
+                    </Route>
                 </Route>
             </Routes>
         </BrowserRouter>

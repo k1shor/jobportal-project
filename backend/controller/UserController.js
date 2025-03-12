@@ -10,8 +10,8 @@ const fs = require('fs')
 
 
 // user signup
-exports.UserSighUp = async (req, res) => {
-    const { first_name, last_name, username, email, password, date_of_birth, gender } = req.body;
+exports.UserSignUp = async (req, res) => {
+    const { first_name, last_name, username, email, password, date_of_birth, gender, role } = req.body;
 
     // console.log(first_name, last_name, username, email, password, date_of_birth, gender);
 
@@ -44,6 +44,7 @@ exports.UserSighUp = async (req, res) => {
         password: hashedPassword, // Use the hashed password
         date_of_birth,
         gender,
+        role
     });
 
     const generatedToken = crypto.randomBytes(24).toString('hex')
@@ -171,10 +172,9 @@ exports.UserLogin = async (req, res) => {
                         return res.status(200).json({ error: "Please verify your account to continue" })
                     } else {
                         // save user details to the local storage
-                        let { _id, username, role } = user
-                        const token = jwt.sign({ _id, role, username }, process.env.SECRET_KEY, { expiresIn: '24h' })
+                        const token = jwt.sign({ _id: user._id, role: user.role, username: user.username }, process.env.SECRET_KEY, { expiresIn: '24h' })
                         res.cookie('user', token, { expire: Date.now() + 86400 })
-                        res.json({ token, success: "logged in success!", user: { _id, username, role, email } })
+                        res.json({ token, success: true })
                     }
 
 
@@ -651,4 +651,27 @@ exports.updateProfile = async (req, res) => {
     res.send({ message: "User Profile Updated Successfully" })
 
     // console.log(user)
+}
+
+exports.returnCompanies = async (req, res) => {
+    let companies = await User.find({
+        role: 1
+    })
+    if (!companies) {
+        return res.status(400).json({ error: "Companies not found" })
+    }
+    res.send({ success: true, data: companies })
+}
+
+exports.returnRole = async (req, res) => {
+    let token = req.headers.authorization.toString().split(' ')[1]
+    console.log(token)
+    if(!token){
+        return res.status(400).jsom({error:"User not logged in"})
+    }
+    let user = jwt.verify(token, process.env.SECRET_KEY)
+    if(!user){
+        return res.status(400).json({error:"Something went wrong"})
+    }
+    res.send({success: true, data: user.role})
 }
