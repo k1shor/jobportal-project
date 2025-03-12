@@ -10,7 +10,7 @@ const RecruitersLayout = () => {
       <RecruiterSidebar />
 
       {/* Main Content */}
-      <div className="max-w-3xl mx-auto p-10">
+      <div className="mx-auto py-10">
       <Outlet />
       </div>
     </div>

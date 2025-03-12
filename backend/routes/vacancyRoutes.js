@@ -9,10 +9,10 @@ const resumeUpload = require("../middleware/AppliedVacancyResume")
 
 
 // post the vacancy here
-router.post('/post-vacancy', isEmployer, vacancyUpload.single('photo') ,postVacancy)
+router.post('/post-vacancy', isEmployer, vacancyUpload.single('image') ,postVacancy)
 
 // get the vacancy 
-router.get('/get-vacancy', getVacancy)
+router.get('/getAllVacancies', getVacancy)
 
 // get specific user vacancy to display it on profile page
 router.get('/user-vacancies', getUserVacancies)

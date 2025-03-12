@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { isAuthenticated } from "../../api/UserAPI";
 
-export default function JobPostingForm() {
+export default function JobPostingForm({closeForm}) {
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -14,29 +15,61 @@ export default function JobPostingForm() {
     salary: "",
     responsibilities: "",
     deadline: "",
+    employerId: "",
+    image: null,
   });
+
+const {token} = isAuthenticated()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
+    if (type === "file") {
+      setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+    } else if (type === "checkbox") {
       setFormData((prev) => ({
         ...prev,
-        skills: checked ? [...prev.skills, value] : prev.skills.filter((skill) => skill !== value),
+        skills: checked
+          ? [...prev.skills, value]
+          : prev.skills.filter((skill) => skill !== value),
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Job Posted:", formData);
+    let formDataObj = new FormData();
+    for (let key in formData) {
+      formDataObj.append(key, formData[key]);
+    }
+    
+    try {
+      const response = await fetch("http://localhost:5000/vacancy/post-vacancy", {
+        method: "POST",
+        body: formDataObj,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const result = await response.json();
+      if(result.error){
+        console.log(result.error)
+      }
+      else{
+
+        alert("Job Posted Successfully:");
+        closeForm(false)
+      }
+    } catch (error) {
+      console.error("Error posting job:", error);
+    }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
       <h2 className="text-2xl font-bold mb-4">Post a Job</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         {[
           { label: "Job Title", name: "title", type: "text" },
           { label: "Location", name: "location", type: "text" },
@@ -67,7 +100,7 @@ export default function JobPostingForm() {
             <option value="Human Resources">Human Resources</option>
           </select>
         </div>
-        <div>
+        <div className="col-span-2">
           <label className="block text-gray-700 font-medium">Skills</label>
           <div className="grid grid-cols-2 gap-2">
             {["JavaScript", "Python", "React", "Node.js", "UI/UX Design", "SEO"].map((skill) => (
@@ -101,13 +134,17 @@ export default function JobPostingForm() {
             <option value="Internship">Internship</option>
           </select>
         </div>
-        <div>
+        <div className="col-span-2">
           <label className="block text-gray-700 font-medium">Key Responsibilities</label>
-          <textarea name="responsibilities" onChange={handleChange} required className="p-2 border rounded w-full h-24" />
+          <textarea name="responsibilities" onChange={handleChange} required className="p-2 border rounded w-full h-24 resize-none" />
         </div>
         <div>
           <label className="block text-gray-700 font-medium">Application Deadline</label>
           <input name="deadline" type="date" onChange={handleChange} required className="p-2 border rounded w-full" />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Upload Job Image</label>
+          <input name="image" type="file" accept="image/*" onChange={handleChange} className="p-2 border rounded w-full" />
         </div>
         <button type="submit" className="p-2 bg-red-400 hover:bg-red-500 text-white rounded">Post Job</button>
       </form>

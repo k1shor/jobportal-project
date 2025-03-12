@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const {ObjectId} = mongoose.Schema
 
 const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },

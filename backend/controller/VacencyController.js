@@ -4,85 +4,47 @@ const jwt = require('jsonwebtoken')
 
 //  post the vacancy
 exports.postVacancy = async (req, res) => {
-    console.log("i am inside the post vacancy")
-    const {title, description, company, type, skillsRequired, salaryRange, location} = req.body;
+    const { title, location, qualification, skills, experience, category, vacancies, employmentType, salary, responsibilities, deadline, otherSkills } = req.body;
+
     // extract the user id based on token
     const authHeader = req.headers['authorization'];
     const token = authHeader.split(' ')[1]
-    const id = null;
     try {
-        const decoded = jwt.verify(token, process.env.SECREAT_KEY)
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
         const posted = await vacancy.create({
             title,
-            description,
+            location,
+            qualification,
+            skills: skills, // Since it's sent as a string from frontend
+            otherSkills,
+            experience,
+            category,
+            vacancies,
+            employmentType,
+            salary,
+            responsibilities,
+            deadline,
             employerId: decoded._id,
-            type: type,
-            company: company,
-            skillsRequired,
-            salaryRange,
-            photo: req.file.filename,
-            location
+            image: req.file?.path
         });
         if (!posted) {
-            return res.status(400).json({error: 'Unable to upload your vacancy'})
+            return res.status(400).json({ error: 'Unable to upload your vacancy' })
         }
-        return res.status(201).json({success: "vacancy posted successfully!", data: posted})
+        return res.status(201).json({ success: "vacancy posted successfully!" })
     } catch (e) {
-        return res.status(400).json({error: e.message})
+        return res.status(400).json({ error: e.message })
     }
 }
 
 // Retrieve the vacancy from the database to display on the home page
 exports.getVacancy = async (req, res) => {
-    const page = parseInt(req.query.page)
-    const limit = parseInt(req.query.limit)
-    const authHeader = req.headers['authorization'];
-    const token = authHeader.split(' ')[1]
 
     // get the latest and recent vacancies
-    const recentVacancies = await vacancy.find()
+    const vacancies = await vacancy.find()
         .populate('employerId', 'profile_picture username')
-        .sort({createdAt: -1})          // sort by most recent
-        .skip((page - 1) * limit)        // skip the previous records 
-        .limit(limit); // Half sequential
+        .sort({ createdAt: -1 })          // sort by most recent
 
-    // get random vacancies
-    const randomVacancies = await vacancy.aggregate([
-        {$sample: {size: Math.floor(limit / 2)}},
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'employerId',
-                foreignField: '_id',
-                as: 'employerId',
-            }
-        },
-        {
-            $unwind: '$employerId',
-        },
-        {
-            $project: {
-                title: 1,
-                description: 1,
-                skillsRequired: 1,
-                salaryRange: 1,
-                location: 1,
-                type: 1,
-                company: 1,
-                photo: 1,
-                createdAt: 1,
-                "employerId.profile_picture": 1,
-                "employerId.username": 1
-            }
-        }
-    ])
-    console.log(randomVacancies)
-
-    //     combine both random and latest vacancies
-    const combinedVacancies = [...randomVacancies, ...recentVacancies]
-        .sort(() => Math.random() - 0.5)
-
-    return res.status(200).json({success: true, data: combinedVacancies})
+    return res.status(200).json({ success: true, data: vacancies })
 }
 
 
@@ -95,13 +57,13 @@ exports.getUserVacancies = async (req, res) => {
     try {
         const recentVacancies = await vacancy.find()
             .populate('employerId', 'profile_picture username')
-            .sort({createdAt: -1})
+            .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(limit); // Half sequential
 
-        return res.status(200).json({success: true, data: recentVacancies})
+        return res.status(200).json({ success: true, data: recentVacancies })
     } catch (e) {
-        return res.status(500).json({error: "Internal server error"})
+        return res.status(500).json({ error: "Internal server error" })
     }
 }
 
@@ -109,11 +71,11 @@ exports.getUserVacancies = async (req, res) => {
 exports.deleteVacancy = async (req, res) => {
     console.log(req.query.id)
 
-    const deletedUser = await vacancy.deleteOne({_id: req.query.id})
+    const deletedUser = await vacancy.deleteOne({ _id: req.query.id })
     if (!deletedUser) {
-        return res.status(404).json({error: 'User does not exist', success: false})
+        return res.status(404).json({ error: 'User does not exist', success: false })
     }
-    return res.status(200).json({success: true, data: deletedUser})
+    return res.status(200).json({ success: true, data: deletedUser })
 }
 
 
@@ -125,11 +87,11 @@ exports.getVacancyDetails = async (req, res) => {
     try {
         const vacancyDetails = await vacancy.findById(id);
         if (!vacancyDetails) {
-            return res.status(404).json({error: 'Vacancy not found', success: false});
+            return res.status(404).json({ error: 'Vacancy not found', success: false });
         }
 
         // Check if the user has applied
-        const isApplied = await Application.findOne({jobSeekerId: userId, vacancyId: id});
+        const isApplied = await Application.findOne({ jobSeekerId: userId, vacancyId: id });
 
         return res.status(200).json({
             success: true,
@@ -139,7 +101,7 @@ exports.getVacancyDetails = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching vacancy details:', error);
-        return res.status(500).json({error: 'Server error', success: false});
+        return res.status(500).json({ error: 'Server error', success: false });
     }
 };
 
@@ -156,28 +118,28 @@ exports.applyVacancy = async (req, res) => {
             question_one: req.body.question1,
             question_two: req.body.question2
         })
-        return res.status(200).json({success: true, data: applicationApplied})
+        return res.status(200).json({ success: true, data: applicationApplied })
     } catch (error) {
-        return res.status(400).json({success: false, error: "Some error has occurred!"})
+        return res.status(400).json({ success: false, error: "Some error has occurred!" })
     }
 }
 
 // get the specific applied vacancy
 exports.getUserAppliedVacancies = async (req, res) => {
     const userId = req.user._id
-    
-    try{
-        const appliedVacancies = await Application.find({jobSeekerId: userId})
+
+    try {
+        const appliedVacancies = await Application.find({ jobSeekerId: userId })
             .populate('jobSeekerId')
             .populate('vacancyId')
-        
-        
-        
-        
-        
-        
-        return res.status(200).json({success: true, data: appliedVacancies})
-    }catch(error){
-        return res.status(500).json({error: 'Internal server error',success: false})
+
+
+
+
+
+
+        return res.status(200).json({ success: true, data: appliedVacancies })
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error', success: false })
     }
 }
