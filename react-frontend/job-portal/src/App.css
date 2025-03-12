@@ -10,3 +10,11 @@
 a:hover{
     @apply bg-main text-white px-2;
 }
+
+.primary-btn{
+    @apply bg-red-400 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition duration-300;
+}
+
+.secondary-btn{
+    @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition duration-300;
+}

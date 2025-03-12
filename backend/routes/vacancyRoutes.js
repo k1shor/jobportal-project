@@ -21,7 +21,7 @@ router.get('/user-vacancies', getUserVacancies)
 router.delete('/delete-vacancy', deleteVacancy)
 
 // get the vacancy details of specific vacancy
-router.get('/get-vacancy-details', isUserAuthenticated ,getVacancyDetails)
+router.get('/get-vacancy-details/:id', getVacancyDetails)
 
 // apply for the job vacancy
 router.post('/apply/:vacancyId', isUserAuthenticated, resumeUpload.single('cv') ,applyVacancy)

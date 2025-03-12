@@ -81,26 +81,18 @@ exports.deleteVacancy = async (req, res) => {
 
 // get vacancies details
 exports.getVacancyDetails = async (req, res) => {
-    const id = req.query.id;
-    const userId = req.user._id;
-
     try {
-        const vacancyDetails = await vacancy.findById(id);
+        const vacancyDetails = await vacancy.findById(req.params.id);
         if (!vacancyDetails) {
             return res.status(404).json({ error: 'Vacancy not found', success: false });
         }
 
-        // Check if the user has applied
-        const isApplied = await Application.findOne({ jobSeekerId: userId, vacancyId: id });
-
         return res.status(200).json({
             success: true,
-            data: vacancyDetails,
-            isApplied: !!isApplied // Convert to boolean
+            data: vacancyDetails
         });
 
     } catch (error) {
-        console.error('Error fetching vacancy details:', error);
         return res.status(500).json({ error: 'Server error', success: false });
     }
 };

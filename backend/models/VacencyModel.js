@@ -16,7 +16,8 @@ const jobSchema = new mongoose.Schema({
   responsibilities: { type: String, required: true },
   deadline: { type: Date, required: true },
   employerId: {type: ObjectId, ref: "User"},
-  status : {type: Number, default: 1}
+  status : {type: Number, default: 1}, 
+  image: {type: String}
 });
 
 module.exports = mongoose.model("Job", jobSchema);
