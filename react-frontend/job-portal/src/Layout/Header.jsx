@@ -27,7 +27,7 @@ const Header = () => {
 
   return (
     <div className="bg-red-400 px-6 md:px-20 lg:px-40 py-6 flex flex-wrap justify-between items-center text-white">
-      <div className="text-2xl md:text-4xl font-bold">JOB PORTAL</div>
+      <div className="text-2xl md:text-4xl font-bold"><Link to={'/'}>JOB PORTAL</Link></div>
       <button
         className="md:hidden text-white text-2xl"
         onClick={() => setIsOpen(!isOpen)}

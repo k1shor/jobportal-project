@@ -1,15 +1,15 @@
-const {postVacancy, getVacancy, getUserVacancies, deleteVacancy, getVacancyDetails, applyVacancy,
+const { postVacancy, getVacancy, getUserVacancies, deleteVacancy, getVacancyDetails, applyVacancy,
     getUserAppliedVacancies
 } = require("../controller/VacencyController");
-const {isEmployer} = require("../controller/UserController");
+const { isCompany } = require("../controller/UserController");
 const router = require('express').Router()
 const vacancyUpload = require("../middleware/vacancyUpload")
-const {isUserAuthenticated} = require("../middleware/Authentication");
+const { isUserAuthenticated } = require("../middleware/Authentication");
 const resumeUpload = require("../middleware/AppliedVacancyResume")
 
 
 // post the vacancy here
-router.post('/post-vacancy', isEmployer, vacancyUpload.single('image') ,postVacancy)
+router.post('/post-vacancy', isCompany, vacancyUpload.single('image'), postVacancy)
 
 // get the vacancy 
 router.get('/getAllVacancies', getVacancy)
@@ -24,7 +24,7 @@ router.delete('/delete-vacancy', deleteVacancy)
 router.get('/get-vacancy-details/:id', getVacancyDetails)
 
 // apply for the job vacancy
-router.post('/apply/:vacancyId', isUserAuthenticated, resumeUpload.single('cv') ,applyVacancy)
+router.post('/apply/:vacancyId', isUserAuthenticated, resumeUpload.single('cv'), applyVacancy)
 
 // get the use applied vacancy
 router.get('/get-user-applied-vacancies', isUserAuthenticated, getUserAppliedVacancies)

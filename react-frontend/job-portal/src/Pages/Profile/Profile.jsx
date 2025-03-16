@@ -4,6 +4,7 @@ import Overview from './Overview';
 import Posts from './Posts';
 import Setting from './Settings';
 import Resume from './Resume';
+import Applications from './Posts';
 
 const Profile = () => {
     const [user, setUser] = useState('');
@@ -63,7 +64,7 @@ const Profile = () => {
 
                     {/* Navigation Tabs */}
                     <div className="flex border-b border-gray-200">
-                        {['overview', 'posts', 'setting', 'resume'].map(tab => (
+                        {['overview', 'applications', 'settings', 'resume'].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -76,8 +77,8 @@ const Profile = () => {
 
                     {/* Dynamic Content Based on Active Tab */}
                     {activeTab === 'overview' && <Overview user= {user} />}
-                    {activeTab === 'posts' && <Posts />}
-                    {activeTab === 'setting' && <Setting user = {user}/>}
+                    {activeTab === 'applications' && <Applications />}
+                    {activeTab === 'settings' && <Setting user = {user}/>}
                     {activeTab === 'resume' && <Resume user = {user} />}
                 </div>
             </div>

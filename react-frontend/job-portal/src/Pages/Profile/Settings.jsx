@@ -9,13 +9,14 @@ const Setting = ({ user }) => {
         password: "",
         date_of_birth: "",
         gender: "",
-        profilePicture: ""
+        profilePicture: "",
+        education: [],
+        experience: []
     });
-    console.log(formData.dateOfBirth)
 
-    const { token } = isAuthenticated()
+    const { token } = isAuthenticated();
+    
     useEffect(() => {
-        // Simulating fetching user data from an API or local storage
         const savedData = user || {};
         setFormData((prevData) => ({ ...prevData, ...savedData }));
     }, []);
@@ -25,6 +26,22 @@ const Setting = ({ user }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleNestedInputChange = (index, e, category) => {
+        const { name, value } = e.target;
+        const updatedArray = [...formData[category]];
+        updatedArray[index] = { ...updatedArray[index], [name]: value };
+        setFormData({ ...formData, [category]: updatedArray });
+    };
+
+    const addEntry = (category, newEntry) => {
+        setFormData({ ...formData, [category]: [...formData[category], newEntry] });
+    };
+
+    const removeEntry = (category, index) => {
+        const updatedArray = formData[category].filter((_, i) => i !== index);
+        setFormData({ ...formData, [category]: updatedArray });
+    };
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setFormData({ ...formData, profilePicture: file });
@@ -32,20 +49,19 @@ const Setting = ({ user }) => {
 
     const handleSave = () => {
         console.log("Settings saved:", formData);
-        let info = new FormData()
+        let info = new FormData();
         for (var key in formData) {
-            info.append(key, formData[key])
+            info.append(key, JSON.stringify(formData[key]));
         }
 
         updateProfile(token, info)
             .then((data) => {
                 if (data.error) {
-                    alert(data.error)
-                }
-                else {
+                    alert(data.error);
+                } else {
                     alert("Your settings have been saved.");
                 }
-            })
+            });
     };
 
     return (
@@ -106,33 +122,34 @@ const Setting = ({ user }) => {
                     </select>
                 </div>
                 <div>
-                    <label className="block font-medium text-gray-700">Profile Picture</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="mt-1 p-2 block w-full border rounded-md"
-                    />
+                    <label className="block font-medium text-gray-700">Educational Qualifications</label>
+                    {formData.education.map((edu, index) => (
+                        <div key={index} className="space-y-2">
+                            <input type="text" name="degree" placeholder="Degree" value={edu.degree} onChange={(e) => handleNestedInputChange(index, e, "education")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <input type="text" name="college" placeholder="College" value={edu.college} onChange={(e) => handleNestedInputChange(index, e, "education")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <input type="text" name="university" placeholder="University" value={edu.university} onChange={(e) => handleNestedInputChange(index, e, "education")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <input type="text" name="passed_year" placeholder="Passed Year" value={edu.passedYear} onChange={(e) => handleNestedInputChange(index, e, "education")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <button onClick={() => removeEntry("education", index)} className="text-red-500">Remove</button>
+                        </div>
+                    ))}
+                    <button onClick={() => addEntry("education", { degree: "", college: "", university: "", passedYear: "" })} className="text-blue-500">Add Education</button>
                 </div>
                 <div>
-                    <label className="block font-medium text-gray-700">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className="mt-1 p-2 block w-full border rounded-md"
-                    />
+                    <label className="block font-medium text-gray-700">Job Experience</label>
+                    {formData.experience.map((exp, index) => (
+                        <div key={index} className="space-y-2">
+                            <input type="text" name="position" placeholder="Position" value={exp.position} onChange={(e) => handleNestedInputChange(index, e, "experience")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <input type="text" name="company" placeholder="Company" value={exp.company} onChange={(e) => handleNestedInputChange(index, e, "experience")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <input type="text" name="year" placeholder="Year" value={exp.year} onChange={(e) => handleNestedInputChange(index, e, "experience")} className="mt-1 p-2 block w-full border rounded-md" />
+                            <button onClick={() => removeEntry("experience", index)} className="text-red-500">Remove</button>
+                        </div>
+                    ))}
+                    <button onClick={() => addEntry("experience", { position: "", company: "", year: "" })} className="text-blue-500">Add Experience</button>
                 </div>
-                <button
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                    Save Settings
-                </button>
+                <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Save Settings</button>
             </div>
         </div>
     );
-}
+};
 
 export default Setting;

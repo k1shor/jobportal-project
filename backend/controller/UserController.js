@@ -553,14 +553,13 @@ exports.getProfile = async (req, res) => {
 
 
 // is allow to post or not
-exports.isEmployer = async (req, res, next) => {
+exports.isCompany = async (req, res, next) => {
     try {
         const token = req.headers['authorization']?.split(' ')[1];
         if (!token) {
             return res.status(400).json({ error: "Access denied. No token provided." })
         }
-        const decoded = await jwt.verify(token, process.env.SECRET_KEY)
-        req.user = decoded;
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
         const user = await User.findById(decoded._id)
         if (!user) {
             return res.status(400).json({ error: "No user found." })
@@ -570,8 +569,33 @@ exports.isEmployer = async (req, res, next) => {
         }
         next()
     } catch (e) {
-        console.log(e)
         return res.status(400).json({ error: e.message })
+    }
+}
+
+// is verified user
+exports.isAuthorized = async (id, token) => {
+    try {
+        if (!token) {
+            return res.status(400).json({ error: "Log in required." })
+        }
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
+        if (id != decoded._id) {
+            return res.status(400).json({ error: "Incorrect user credentials." })
+        }
+    } catch (e) {
+        return res.status(500).json({ error: e.message })
+    }
+}
+
+// is logged In
+exports.isLoggedIn = async (token) => {
+    try {
+        if (!token) {
+            return res.status(400).json({ error: "Log in required." })
+        }
+    } catch (e) {
+        return res.status(500).json({ error: e.message })
     }
 }
 
@@ -618,40 +642,51 @@ exports.uploadProfilePicture = async (req, res) => {
 }
 
 exports.updateProfile = async (req, res) => {
-    console.log(req.body)
-    const { first_name, last_name, date_of_birth, gender, password, bio, phone } = req.body
+    console.log(req.body);
+    const { first_name, last_name, date_of_birth, gender, password, bio, phone, education, experience } = req.body;
 
-    let token = await req.headers.authorization
-    token = await token.split(" ")[1]
-    const { _id } = jwt.verify(token, process.env.SECRET_KEY)
-    let user = await UserModel.findById(_id)
-    user.fullName = (first_name || last_name) ? `${first_name} ${last_name}` : user.fullName
-    user.first_name = first_name ? first_name : user.first_name
-    user.last_name = last_name ? last_name : user.last_name
-    user.date_of_birth = date_of_birth ? date_of_birth : user.date_of_birth
-    user.gender = gender ? gender : user.gender
-    user.bio = bio ? bio : user.bio
-    user.phone = phone ? phone : user.phone
+    let token = await req.headers.authorization;
+    token = await token.split(" ")[1];
+    const { _id } = jwt.verify(token, process.env.SECRET_KEY);
+    let user = await UserModel.findById(_id);
+    
+    user.fullName = (first_name || last_name) ? `${first_name} ${last_name}` : user.fullName;
+    user.first_name = first_name ? first_name : user.first_name;
+    user.last_name = last_name ? last_name : user.last_name;
+    user.date_of_birth = date_of_birth ? date_of_birth : user.date_of_birth;
+    user.gender = gender ? gender : user.gender;
+    user.bio = bio ? bio : user.bio;
+    user.phone = phone ? phone : user.phone;
+    
     if (req.file) {
         if (user.profile_picture) {
-            fs.unlinkSync(user.profile_picture)
+            fs.unlinkSync(user.profile_picture);
         }
-        user.profile_picture = req.file?.path
+        user.profile_picture = req.file?.path;
     }
-    if (password != user.password) {
-        let salt = await bcrypt.genSalt(10)
-        let hashedPassword = await bcrypt.hash(password, salt)
-        user.password = hashedPassword
+    
+    if (password && password !== user.password) {
+        let salt = await bcrypt.genSalt(10);
+        let hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
     }
-
-    user = await user.save()
+    
+    if (education) {
+        user.education = JSON.parse(education);
+    }
+    
+    if (experience) {
+        user.experience = JSON.parse(experience);
+    }
+    
+    user = await user.save();
     if (!user) {
-        return res.status(400).json({ error: "Something went wrong" })
+        return res.status(400).json({ error: "Something went wrong" });
     }
-    res.send({ message: "User Profile Updated Successfully" })
+    
+    res.send({ message: "User Profile Updated Successfully" });
+};
 
-    // console.log(user)
-}
 
 exports.returnCompanies = async (req, res) => {
     let companies = await User.find({
@@ -666,12 +701,12 @@ exports.returnCompanies = async (req, res) => {
 exports.returnRole = async (req, res) => {
     let token = req.headers.authorization.toString().split(' ')[1]
     console.log(token)
-    if(!token){
-        return res.status(400).jsom({error:"User not logged in"})
+    if (!token) {
+        return res.status(400).jsom({ error: "User not logged in" })
     }
     let user = jwt.verify(token, process.env.SECRET_KEY)
-    if(!user){
-        return res.status(400).json({error:"Something went wrong"})
+    if (!user) {
+        return res.status(400).json({ error: "Something went wrong" })
     }
-    res.send({success: true, data: user.role})
+    res.send({ success: true, data: user.role })
 }

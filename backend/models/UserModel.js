@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-const {ObjectId} = mongoose.Schema
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
@@ -26,7 +25,7 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: Number,
         default: 0
-        // 0 is normal user && 1 is company, 2 is admin, 
+        // 0 is normal user, 1 is company, 2 is admin
     },
     verified: {
         type: Boolean,
@@ -44,11 +43,22 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: 'default.jpg',
         required: false
-    }
+    },
+    education: [{
+        degree: { type: String, required: true },
+        college: { type: String, required: true },
+        university: { type: String, required: true },
+        passed_year: { type: Number, required: true }
+    }],
+    experience: [{
+        position: { type: String, required: true },
+        company: { type: String, required: true },
+        year: { type: Number, required: true }
+    }]
+}, { timestamps: true });
 
-}, { timestamps: true })
+module.exports = mongoose.model("User", UserSchema);
 
-module.exports = mongoose.model("User", UserSchema)
 
 /**
  * user signup
