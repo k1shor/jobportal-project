@@ -174,7 +174,7 @@ exports.UserLogin = async (req, res) => {
                         // save user details to the local storage
                         const token = jwt.sign({ _id: user._id, role: user.role, username: user.username }, process.env.SECRET_KEY, { expiresIn: '24h' })
                         res.cookie('user', token, { expire: Date.now() + 86400 })
-                        res.json({ token, success: true })
+                        res.json({ token, role: user.role, success: true })
                     }
 
 
@@ -365,8 +365,6 @@ exports.sendTokenToResetPassword = async (req, res) => {
         return res.status(400).json({ error: "user not found!" })
     }
     // generate a token
-    const email = user._id
-    console.log(user)
     let token = await Token.create({
         user: user._id,
         token: crypto.randomBytes(24).toString('hex')
@@ -458,7 +456,7 @@ exports.sendTokenToResetPassword = async (req, res) => {
   </html>`;
 
     //   call the sendEmailToUser function to send the email
-    let email_send = sendEmailToUser('noreply@something.com', "rockymoderator@gmail.com", "Password Reset", textContent, htmlContent)
+    let email_send = sendEmailToUser('noreply@something.com', user.email, "Reset Password", textContent, htmlContent)
 
     if (email_send) {
         return res.status(200).json({ success: "password-reset token send to your email address" })
@@ -649,7 +647,7 @@ exports.updateProfile = async (req, res) => {
     token = await token.split(" ")[1];
     const { _id } = jwt.verify(token, process.env.SECRET_KEY);
     let user = await UserModel.findById(_id);
-    
+
     user.fullName = (first_name || last_name) ? `${first_name} ${last_name}` : user.fullName;
     user.first_name = first_name ? first_name : user.first_name;
     user.last_name = last_name ? last_name : user.last_name;
@@ -657,33 +655,33 @@ exports.updateProfile = async (req, res) => {
     user.gender = gender ? gender : user.gender;
     user.bio = bio ? bio : user.bio;
     user.phone = phone ? phone : user.phone;
-    
+
     if (req.file) {
         if (user.profile_picture) {
             fs.unlinkSync(user.profile_picture);
         }
         user.profile_picture = req.file?.path;
     }
-    
+
     if (password && password !== user.password) {
         let salt = await bcrypt.genSalt(10);
         let hashedPassword = await bcrypt.hash(password, salt);
         user.password = hashedPassword;
     }
-    
+
     if (education) {
         user.education = JSON.parse(education);
     }
-    
+
     if (experience) {
         user.experience = JSON.parse(experience);
     }
-    
+
     user = await user.save();
     if (!user) {
         return res.status(400).json({ error: "Something went wrong" });
     }
-    
+
     res.send({ message: "User Profile Updated Successfully" });
 };
 
@@ -700,13 +698,17 @@ exports.returnCompanies = async (req, res) => {
 
 exports.returnRole = async (req, res) => {
     let token = req.headers.authorization.toString().split(' ')[1]
-    console.log(token)
     if (!token) {
         return res.status(400).jsom({ error: "User not logged in" })
     }
-    let user = jwt.verify(token, process.env.SECRET_KEY)
-    if (!user) {
-        return res.status(400).json({ error: "Something went wrong" })
+    try{
+        let user = jwt.verify(token, process.env.SECRET_KEY)
+        if (!user) {
+            return res.status(400).json({ error: "Something went wrong" })
+        }
+        res.send({ success: true, data: user.role })
     }
-    res.send({ success: true, data: user.role })
+    catch(error){
+        res.status(500).json({error:error.message})
+    }
 }

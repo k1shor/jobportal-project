@@ -43,11 +43,11 @@ const MyRoutes = () => {
 
 
 
+                </Route>
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/profile/posts' element={<Posts />} />
                     <Route path='/profile/resume' element={<Resume />} />
                     <Route path='/profile/settings' element={<Setting />} />
-                </Route>
                 <Route path='/' element={<RecruitersLayout />}>
                     <Route path='recruiters' element={<RecruitersRoute />}>
                         <Route index element={<RecruitersDashboard />} />

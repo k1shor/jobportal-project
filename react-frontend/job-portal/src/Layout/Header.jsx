@@ -4,19 +4,23 @@ import { getRole, isAuthenticated, logout } from '../api/UserAPI';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [role, setRole] = useState(0)
+  // const [role, setRole] = useState(0)
   let navigate = useNavigate()
 
   // Check if the user is logged in using localStorage or a similar mechanism
-  const { token } = isAuthenticated()
+  const { token, role } = isAuthenticated()
   useEffect(() => {
-    getRole(token)
-      .then(data => {
-        if (data.error) {
-          console.log(data.error)
-        }
-        setRole(data.data)
-      })
+    if (token) {
+      getRole(token)
+        .then(data => {
+          if (data.error) {
+            if(data.error == "jwt expired"){
+              localStorage.removeItem('jwt')
+              navigate('/login')
+            }
+          }
+        })
+    }
   }, []);
 
   const handleLogout = () => {
@@ -48,7 +52,10 @@ const Header = () => {
 
         {token ? (
           <>
-            <li><Link to="/profile" className="block px-4 py-2 md:p-0 hover:text-gray-200">Profile</Link></li>
+            {
+              role != '1' &&
+              <li><Link to="/profile" className="block px-4 py-2 md:p-0 hover:text-gray-200">Profile</Link></li>
+}
             <li><button
               onClick={handleLogout}
               className="block px-4 py-2 md:p-0 hover:text-gray-200">Logout</button>

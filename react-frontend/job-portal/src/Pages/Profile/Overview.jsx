@@ -2,7 +2,16 @@ import React from "react";
 import { API } from "../../config";
 
 const Overview = ({ user }) => {
-    const { fullName, phone, email, profile_picture, date_of_birth, gender, bio, education, experience } = user;
+    const {  fullName, phone, email, profile_picture, date_of_birth, gender, bio, education, experience } = user;
+    // const username = user.username?user.fullName : ""
+    // const phone = user.phone?user.phone: ""
+    // const profile_picture = user.phone?user.phone: ""
+    // const date_of_birth = user.phone?user.phone: ""
+    // const gender = user.phone?user.phone: ""
+    // const bio = user.phone?user.phone: ""
+    // const education = user.phone?user.phone: ""
+    // const experience = user.phone?user.phone: ""
+    
     
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg">

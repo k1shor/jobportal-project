@@ -75,7 +75,7 @@ export const changePassword = (password, token) => {
 
 
 export const authenticate = (data) => {
-    localStorage.setItem('jwt', JSON.stringify(data))
+   return  localStorage.setItem('jwt', JSON.stringify(data))
 }
 
 

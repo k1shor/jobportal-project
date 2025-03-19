@@ -5,13 +5,15 @@ import Posts from './Posts';
 import Setting from './Settings';
 import Resume from './Resume';
 import Applications from './Posts';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Profile = () => {
     const [user, setUser] = useState('');
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
 
-    const {token} = isAuthenticated()
+    const { token } = isAuthenticated()
+    const navigate = useNavigate()
 
     // This will extract the username from token in localStorage
     useEffect(() => {
@@ -26,9 +28,17 @@ const Profile = () => {
                     console.error(err);
                 });
         }
+        else {
+            navigate('/login')
+        }
     }, []);
 
-    
+    const handleLogout = () => {
+        localStorage.removeItem('jwt')
+        navigate('/')
+    }
+
+
 
 
 
@@ -46,7 +56,7 @@ const Profile = () => {
             <div className="min-h-screen bg-gray-100 py-8">
                 <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
                     {/* Header Section */}
-                    <div className="bg-gradient-to-r from-red-400 to-red-600 p-6">
+                    <div className="bg-gradient-to-r from-red-400 to-red-600 p-6 flex justify-between">
                         <div className="flex items-center space-x-4">
                             <img
                                 src={user?.profile_picture ? user.profile_picture : "http://localhost:5000/profile/default.png"}  // Dynamic image URL or fallback
@@ -55,10 +65,14 @@ const Profile = () => {
                             />
                             <div className="text-white">
                                 <h1 className="text-2xl font-bold">
-                                    
+
                                 </h1>
                                 <p className="text-sm opacity-80">{user?.email}</p>
                             </div>
+                        </div>
+                        <div>
+                            <Link to='/' className='link'>HOME</Link>
+                            <button className='btn' onClick={handleLogout}>LOGOUT</button>
                         </div>
                     </div>
 
@@ -76,10 +90,10 @@ const Profile = () => {
                     </div>
 
                     {/* Dynamic Content Based on Active Tab */}
-                    {activeTab === 'overview' && <Overview user= {user} />}
+                    {activeTab === 'overview' && <Overview user={user} />}
                     {activeTab === 'applications' && <Applications />}
-                    {activeTab === 'settings' && <Setting user = {user}/>}
-                    {activeTab === 'resume' && <Resume user = {user} />}
+                    {activeTab === 'settings' && <Setting user={user} />}
+                    {activeTab === 'resume' && <Resume user={user} />}
                 </div>
             </div>
     );
