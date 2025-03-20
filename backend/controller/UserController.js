@@ -537,6 +537,7 @@ exports.getProfile = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY)
         let user = await User.findById(decoded._id)
+        console.log(user)
         return res.send(user)
     } catch (err) {
         return res.status(400).json({ error: "Invalid token" })
@@ -641,23 +642,26 @@ exports.uploadProfilePicture = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     console.log(req.body);
-    const { first_name, last_name, date_of_birth, gender, password, bio, phone, education, experience } = req.body;
+    const { first_name, last_name, date_of_birth, gender, password, bio, phone, education, experience, company } = req.body;
 
     let token = await req.headers.authorization;
     token = await token.split(" ")[1];
     const { _id } = jwt.verify(token, process.env.SECRET_KEY);
     let user = await UserModel.findById(_id);
 
-    user.fullName = (first_name || last_name) ? `${first_name} ${last_name}` : user.fullName;
+    user.first_name = first_name  ? first_name : user.first_name;
+    user.last_name =  last_name ? last_name : user.last_name;
     user.first_name = first_name ? first_name : user.first_name;
     user.last_name = last_name ? last_name : user.last_name;
     user.date_of_birth = date_of_birth ? date_of_birth : user.date_of_birth;
     user.gender = gender ? gender : user.gender;
     user.bio = bio ? bio : user.bio;
     user.phone = phone ? phone : user.phone;
+    user.company = company ? company : user.company
 
     if (req.file) {
         if (user.profile_picture) {
+            if(fs.existsSync(user.profile_picture))
             fs.unlinkSync(user.profile_picture);
         }
         user.profile_picture = req.file?.path;

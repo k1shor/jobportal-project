@@ -135,3 +135,28 @@ exports.getUserAppliedVacancies = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error', success: false })
     }
 }
+
+// update 
+exports.updateVacancy = async (req, res) => {
+    const { title, location, qualification, skills, experience, category, vacancies, employmentType, salary, responsibilities, deadline, otherSkills } = req.body;
+
+    let vacancyToUpdate = await vacancy.findByIdAndUpdate(req.params.jobId, {
+        title,
+        location,
+        qualification,
+        skills, // Since it's sent as a string from frontend
+        otherSkills,
+        experience,
+        category,
+        vacancies,
+        employmentType,
+        salary,
+        responsibilities,
+        deadline,
+        image: req.file?.path
+    })
+    if(!vacancyToUpdate){
+        return res.status(400).json({error:"Something went wrong"})
+    } 
+    res.send(vacancyToUpdate)
+}

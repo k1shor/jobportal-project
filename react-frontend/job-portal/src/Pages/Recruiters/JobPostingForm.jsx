@@ -67,7 +67,7 @@ const {token} = isAuthenticated()
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+    <div className="bg-white p-6 rounded-2xl shadow-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Post a Job</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         {[
@@ -79,19 +79,19 @@ const {token} = isAuthenticated()
           { label: "Salary", name: "salary", type: "text" },
         ].map((field) => (
           <div key={field.name}>
-            <label className="block text-gray-700 font-medium">{field.label}</label>
+            <label className="text-gray-700 block font-medium">{field.label}</label>
             <input
               name={field.name}
               type={field.type}
               onChange={handleChange}
               required
-              className="p-2 border rounded w-full"
+              className="border p-2 rounded w-full"
             />
           </div>
         ))}
         <div>
-          <label className="block text-gray-700 font-medium">Job Category</label>
-          <select name="category" onChange={handleChange} required className="p-2 border rounded w-full">
+          <label className="text-gray-700 block font-medium">Job Category</label>
+          <select name="category" onChange={handleChange} required className="border p-2 rounded w-full">
             <option value="">Select Job Category</option>
             <option value="Software Development">Software Development</option>
             <option value="Marketing">Marketing</option>
@@ -101,7 +101,7 @@ const {token} = isAuthenticated()
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-gray-700 font-medium">Skills</label>
+          <label className="text-gray-700 block font-medium">Skills</label>
           <div className="grid grid-cols-2 gap-2">
             {["JavaScript", "Python", "React", "Node.js", "UI/UX Design", "SEO"].map((skill) => (
               <label key={skill} className="flex items-center space-x-2">
@@ -121,12 +121,12 @@ const {token} = isAuthenticated()
             type="text"
             placeholder="Other skills"
             onChange={handleChange}
-            className="p-2 border rounded w-full mt-2"
+            className="border p-2 rounded w-full mt-2"
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium">Employment Type</label>
-          <select name="employmentType" onChange={handleChange} required className="p-2 border rounded w-full">
+          <label className="text-gray-700 block font-medium">Employment Type</label>
+          <select name="employmentType" onChange={handleChange} required className="border p-2 rounded w-full">
             <option value="">Select Employment Type</option>
             <option value="Full-time">Full-time</option>
             <option value="Part-time">Part-time</option>
@@ -135,18 +135,18 @@ const {token} = isAuthenticated()
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-gray-700 font-medium">Key Responsibilities</label>
-          <textarea name="responsibilities" onChange={handleChange} required className="p-2 border rounded w-full h-24 resize-none" />
+          <label className="text-gray-700 block font-medium">Key Responsibilities</label>
+          <textarea name="responsibilities" onChange={handleChange} required className="border h-24 p-2 rounded w-full resize-none" />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium">Application Deadline</label>
-          <input name="deadline" type="date" onChange={handleChange} required className="p-2 border rounded w-full" />
+          <label className="text-gray-700 block font-medium">Application Deadline</label>
+          <input name="deadline" type="date" onChange={handleChange} required className="border p-2 rounded w-full" />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium">Upload Job Image</label>
-          <input name="image" type="file" accept="image/*" onChange={handleChange} className="p-2 border rounded w-full" />
+          <label className="text-gray-700 block font-medium">Upload Job Image</label>
+          <input name="image" type="file" accept="image/*" onChange={handleChange} className="border p-2 rounded w-full" />
         </div>
-        <button type="submit" className="p-2 bg-red-400 hover:bg-red-500 text-white rounded">Post Job</button>
+        <button type="submit" className="bg-red-400 p-2 rounded text-white hover:bg-red-500">Post Job</button>
       </form>
     </div>
   );

@@ -18,7 +18,7 @@ router.get("/verify-password-reset-token/:token", verifyTokenForPasswordChange)
 router.post("/change-password/:token", changePassword)
 router.post("/get-profile", getProfile)
 
-router.put('/updateprofile', profileUpload.single('profilePicture'), updateProfile)
+router.put('/updateprofile', profileUpload.single('profile_picture'), updateProfile)
 
 
 // delete the token from the database
