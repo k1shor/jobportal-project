@@ -30,22 +30,23 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-red-400 px-6 md:px-20 lg:px-40 py-6 flex flex-wrap justify-between items-center text-white">
-      <div className="text-2xl md:text-4xl font-bold"><Link to={'/'}>JOB PORTAL</Link></div>
+    <div className="flex flex-wrap bg-red-400 justify-between text-white items-center lg:px-40 md:px-20 px-6 py-6">
+      <div className="text-2xl font-bold md:text-4xl"><Link to={'/'}>JOB PORTAL</Link></div>
       <button
-        className="md:hidden text-white text-2xl"
+        className="text-2xl text-white md:hidden"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? '✖' : '☰'}
       </button>
       <ul className={`absolute top-16 left-0 w-full bg-red-500 md:bg-transparent md:static md:flex md:w-1/2 justify-evenly mt-4 md:mt-0 transition-all ${isOpen ? 'block' : 'hidden'}`}>
-        <li><Link to="/jobs" className="block px-4 py-2 md:p-0 hover:text-gray-200">Jobs</Link></li>
-        <li><Link to="/services" className="block px-4 py-2 md:p-0 hover:text-gray-200">Services</Link></li>
+        <li><Link to="/jobs" className="block hover:text-gray-200 md:p-0 px-4 py-2">Jobs</Link></li>
+        <li><Link to="/services" className="block hover:text-gray-200 md:p-0 px-4 py-2">Services</Link></li>
+        <li><Link to="/about" className="block hover:text-gray-200 md:p-0 px-4 py-2">About</Link></li>
         {
           role == 1 ?
-            <li><Link to="/recruiters" className="block px-4 py-2 md:p-0 hover:text-gray-200">Recruiters</Link></li>
+            <li><Link to="/recruiters" className="block hover:text-gray-200 md:p-0 px-4 py-2">Recruiters</Link></li>
             :
-            <li><Link to="/company" className="block px-4 py-2 md:p-0 hover:text-gray-200">Company</Link></li>
+            <li><Link to="/company" className="block hover:text-gray-200 md:p-0 px-4 py-2">Company</Link></li>
 
         }
 
@@ -54,21 +55,21 @@ const Header = () => {
           <>
             {
               role != '1' &&
-              <li><Link to="/profile" className="block px-4 py-2 md:p-0 hover:text-gray-200">Profile</Link></li>
+              <li><Link to="/profile" className="block hover:text-gray-200 md:p-0 px-4 py-2">Profile</Link></li>
 }
             <li><button
               onClick={handleLogout}
-              className="block px-4 py-2 md:p-0 hover:text-gray-200">Logout</button>
+              className="block hover:text-gray-200 md:p-0 px-4 py-2">Logout</button>
             </li>
           </>
         ) : (
           <>
-            <li><Link to="/login" className="block px-4 py-2 md:p-0 hover:text-gray-200">Login</Link></li>
-            <li><Link to="/register" className="block px-4 py-2 md:p-0 hover:text-gray-200">Register</Link></li>
+            <li><Link to="/login" className="block hover:text-gray-200 md:p-0 px-4 py-2">Login</Link></li>
+            <li><Link to="/register" className="block hover:text-gray-200 md:p-0 px-4 py-2">Register</Link></li>
           </>
         )}
 
-        {/* <li><Link to="/upload-resume" className="block px-4 py-2 md:p-0 hover:text-gray-200">Upload Resume</Link></li> */}
+        {/* <li><Link to="/upload-resume" className="block hover:text-gray-200 md:p-0 px-4 py-2">Upload Resume</Link></li> */}
       </ul>
     </div>
   );

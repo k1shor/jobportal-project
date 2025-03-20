@@ -22,6 +22,10 @@ import JobPostings from './Pages/Recruiters/JobPostings'
 import Settings from './Pages/Recruiters/Settings'
 import Companies from './Pages/Companies'
 import RecruitersRoute from './protectedRoutes.jsx/RecruitersRoute'
+import AboutPage from './Pages/About'
+import PrivacyPolicyPage from './Pages/PrivacyStatements'
+import Terms from './Pages/Terms'
+import ContactPage from './Pages/ContactPage'
 
 const MyRoutes = () => {
     return (
@@ -36,9 +40,15 @@ const MyRoutes = () => {
                     <Route path='/resetpassword/:token' element={<ResetPassword />} />
 
                     <Route path='services' element={<ServicePage />} />
+                    <Route path='about' element={<AboutPage />} />
                     <Route path='jobs' element={<JobsPage />} />
                     <Route path='jobs/:id' element={<JobDetailsPage />} />
                     <Route path='company' element={<Companies />} />
+
+                    <Route path='contact' element = {<ContactPage/>}/>
+
+                    <Route path='privacy-policy' element={<PrivacyPolicyPage/>}/>
+                    <Route path='terms' element = {<Terms/>}/>
 
 
 
