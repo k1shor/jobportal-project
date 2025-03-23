@@ -22,6 +22,7 @@ const JobDetailsPage = () => {
         }
         else {
           setJob(data.data)
+          token &&
           getApplicationStatus(id, token)
             .then(data => {
               if (data.success) {
@@ -53,7 +54,7 @@ const JobDetailsPage = () => {
 
 
   return (
-    <div className='bg-gray-100 py-5'>
+    <div className='bg-gray-100 py-5 job-details'>
       <div className='bg-white p-6 rounded-xl shadow-lg w-[90vw] lg:w-[60vw] md:w-[75vw] mx-auto'>
         {
           job &&
@@ -62,12 +63,16 @@ const JobDetailsPage = () => {
             <div className='px-28'>
 
               <h2 className='text-3xl text-red-400 font-bold mb-4'>{job.title}</h2>
-              <p className='text-xl ext-gray-600'><strong>Company:</strong> {job.company}</p>
+              <p className='text-xl ext-gray-600'><strong>Company:</strong> {job.employerId?.company}</p>
               <p className='text-gray-600 text-xl'><strong>Location:</strong> {job.location}</p>
               <p className='text-gray-600 text-xl'><strong>Job Type:</strong> {job.employmentType}</p>
               <p className='text-gray-600 text-xl'><strong>Experience:</strong> {job.experience} years</p>
-              <p className='text-gray-800 text-xl mt-4'><strong>Job Description:</strong> {job.responsibilities}</p>
-              <p className='text-gray-600 text-xl'><strong>Skills:</strong> {job.skills}<br />{job.otherSkills}</p>
+              <p className='text-gray-800 text-xl mt-4' setInn
+              dangerouslySetInnerHTML={{__html: `<strong>Job Description:</strong>${job.responsibilities}` }}
+              ></p>
+              <p className='text-gray-600 text-xl'
+              dangerouslySetInnerHTML={{__html: `<strong>Skills:</strong><br>${job.skills}<br>${job.otherSkills}` }}
+              ></p>
               <p className='text-gray-600 text-xl'><strong>Salary:</strong> Rs.{job.salary}</p>
               <p className='text-gray-600 text-xl'><strong>Deadline:</strong> {job.deadline.toString().split('T')[0]}</p>
               <p className='text-gray-600 text-xl'><strong>No. of Positions:</strong> {job.vacancies}</p>
@@ -83,7 +88,10 @@ const JobDetailsPage = () => {
             </>
 
             :
+            token ?
             <button className='my-5 primary-btn' onClick={handleApply}>APPLY NOW</button>
+            :
+            <Link to='/login' className='inline-block my-5 primary-btn'>LOGIN TO APPLY</Link>
           }
         </div>
       </div>

@@ -3,7 +3,8 @@ const {  UserLogin, verifyUser, resendVerification, verifyTokenForPasswordChange
     updateProfile,
     returnCompanies,
     UserSignUp,
-    returnRole
+    returnRole,
+    getCompanyDetails
 } = require('../controller/UserController')
 const profileUpload = require('../middleware/profileUpload')
 
@@ -25,6 +26,7 @@ router.put('/updateprofile', profileUpload.single('profile_picture'), updateProf
 router.post("/delete-token", deleteToken)
 
 router.get('/getcompanies', returnCompanies)
+router.get('/getcompanydetails/:id',getCompanyDetails)
 router.get('/getRole', returnRole)
 
 module.exports = router

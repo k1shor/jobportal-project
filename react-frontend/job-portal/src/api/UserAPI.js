@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom"
 import { API } from "../config"
 
 export const register = (user) => {
@@ -145,3 +144,9 @@ export const getRole = (token) => {
         .then(response => response.json())
         .catch(error => console.log("Error: " + error))
 }
+
+export const getCompanyDetails = (id) => {
+    return fetch(`${API}/getCompanyDetails/${id}`)  // Assuming your API has an endpoint for getting user details
+        .then(response => response.json())
+        .catch(error => ({ error: error.message }));
+};

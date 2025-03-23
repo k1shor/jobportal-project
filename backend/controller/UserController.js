@@ -544,6 +544,15 @@ exports.getProfile = async (req, res) => {
     }
 }
 
+// get company Details
+exports.getCompanyDetails = async (req, res) => {
+    let company = await User.findById(req.params.id)
+    if(!company){
+        return res.status(400).json({error:"Something went wrong"})
+    }
+    res.send(company)
+}
+
 
 
 // details: education, experience, language, reference, tranning, skillset,

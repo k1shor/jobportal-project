@@ -12,3 +12,8 @@ export const getVacancyDetails = (id) => {
         .catch(error => console.log(error))
 }
 
+export const getCompanyJobs = id => {
+    return fetch(`${API}/vacancy/getvacanciesofcompany/${id}`)
+        .then(response => response.json())
+        .catch(error => console.log(error))
+}

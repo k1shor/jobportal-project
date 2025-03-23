@@ -10,16 +10,16 @@ const JobsPage = () => {
 
   useEffect(() => {
     getAllVacancies()
-    .then(data=>{
-      if(data.error){
-        console.log(data.error)
-      }
-      else{
-        console.log(data)
-        setJobs(data.data);
+      .then(data => {
+        if (data.error) {
+          console.log(data.error)
+        }
+        else {
+          console.log(data)
+          setJobs(data.data);
 
-      }
-    })
+        }
+      })
   }, []);
 
   return (
@@ -31,16 +31,18 @@ const JobsPage = () => {
           {jobs.map((job) => (
             <div key={job._id} className='bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition'>
               <div className='flex h-40 justify-center shadow-lg items-center mb-5 overflow-hidden'>
-              <img src={`${API}/${job.image}`} alt={job.image} className='w-full' />
+                <img src={`${API}/${job.image}`} alt={job.image} className='w-full' />
               </div>
-              <h3 className='text-gray-800 text-xl font-semibold'>{job.title}</h3>
+              <h3 className='text-gray-800 text-xl font-semibold'>
+                {job.title}
+              </h3>
               <p className='text-gray-600'>{job.employerId?.company} - {job.location}</p>
               <span className='text-red-400 text-sm font-medium'>{job.employmentType}</span>
               <p className='text-gray-600 mt-2'>Skills- {job.skills}</p>
               <p className='text-gray-600'>Salary- Rs.{job.salary}</p>
               <p className='text-gray-600'>Deadline- {job.deadline?.toString().split('T')[0]}</p>
-              <Link 
-                to={`/jobs/${job._id}`} 
+              <Link
+                to={`/jobs/${job._id}`}
                 className='text-red-400 block hover:underline mt-4'
               >
                 View Details

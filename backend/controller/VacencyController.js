@@ -125,11 +125,6 @@ exports.getUserAppliedVacancies = async (req, res) => {
             .populate('jobSeekerId')
             .populate('vacancyId')
 
-
-
-
-
-
         return res.status(200).json({ success: true, data: appliedVacancies })
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error', success: false })
@@ -159,4 +154,13 @@ exports.updateVacancy = async (req, res) => {
         return res.status(400).json({error:"Something went wrong"})
     } 
     res.send(vacancyToUpdate)
+}
+
+// GET VACANCY OF A COMPANY
+exports.getVacancyOfACompany = async (req, res) => {
+    let vacancies = await vacancy.find({employerId: req.params.employerId})
+    if(!vacancies){
+        return res.status(400).json({error:"Something went wrong"})
+    }
+    res.send(vacancies)
 }

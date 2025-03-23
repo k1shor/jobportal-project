@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { isAuthenticated } from "../../api/UserAPI";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
-export default function JobPostingForm({closeForm}) {
+export default function JobPostingForm({ closeForm }) {
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -19,7 +21,7 @@ export default function JobPostingForm({closeForm}) {
     image: null,
   });
 
-const {token} = isAuthenticated()
+  const { token } = isAuthenticated();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,29 +39,31 @@ const {token} = isAuthenticated()
     }
   };
 
+  const handleQuillChange = (value) => {
+    setFormData((prev) => ({ ...prev, responsibilities: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let formDataObj = new FormData();
     for (let key in formData) {
       formDataObj.append(key, formData[key]);
     }
-    
+
     try {
       const response = await fetch("http://localhost:5000/vacancy/post-vacancy", {
         method: "POST",
         body: formDataObj,
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const result = await response.json();
-      if(result.error){
-        console.log(result.error)
-      }
-      else{
-
+      if (result.error) {
+        console.log(result.error);
+      } else {
         alert("Job Posted Successfully:");
-        closeForm(false)
+        closeForm(false);
       }
     } catch (error) {
       console.error("Error posting job:", error);
@@ -100,6 +104,16 @@ const {token} = isAuthenticated()
             <option value="Human Resources">Human Resources</option>
           </select>
         </div>
+        <div>
+          <label className="text-gray-700 block font-medium">Employment Type</label>
+          <select name="employmentType" onChange={handleChange} required className="border p-2 rounded w-full">
+            <option value="">Select Employment Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+          </select>
+        </div>
         <div className="col-span-2">
           <label className="text-gray-700 block font-medium">Skills</label>
           <div className="grid grid-cols-2 gap-2">
@@ -124,19 +138,9 @@ const {token} = isAuthenticated()
             className="border p-2 rounded w-full mt-2"
           />
         </div>
-        <div>
-          <label className="text-gray-700 block font-medium">Employment Type</label>
-          <select name="employmentType" onChange={handleChange} required className="border p-2 rounded w-full">
-            <option value="">Select Employment Type</option>
-            <option value="Full-time">Full-time</option>
-            <option value="Part-time">Part-time</option>
-            <option value="Contract">Contract</option>
-            <option value="Internship">Internship</option>
-          </select>
-        </div>
         <div className="col-span-2">
           <label className="text-gray-700 block font-medium">Key Responsibilities</label>
-          <textarea name="responsibilities" onChange={handleChange} required className="border h-24 p-2 rounded w-full resize-none" />
+          <ReactQuill value={formData.responsibilities} onChange={handleQuillChange} className="bg-white rounded border" />
         </div>
         <div>
           <label className="text-gray-700 block font-medium">Application Deadline</label>
@@ -146,7 +150,10 @@ const {token} = isAuthenticated()
           <label className="text-gray-700 block font-medium">Upload Job Image</label>
           <input name="image" type="file" accept="image/*" onChange={handleChange} className="border p-2 rounded w-full" />
         </div>
-        <button type="submit" className="bg-red-400 p-2 rounded text-white hover:bg-red-500">Post Job</button>
+        <div className="col-span-2 flex justify-between mt-4">
+          <button type="button" onClick={() => closeForm(false)} className="bg-gray-400 p-2 rounded text-white hover:bg-gray-500">Cancel</button>
+          <button type="submit" className="bg-red-400 p-2 rounded text-white hover:bg-red-500">Post Job</button>
+        </div>
       </form>
     </div>
   );

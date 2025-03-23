@@ -1,6 +1,7 @@
 const { postVacancy, getVacancy, getUserVacancies, deleteVacancy, getVacancyDetails, applyVacancy,
     getUserAppliedVacancies,
-    updateVacancy
+    updateVacancy,
+    getVacancyOfACompany
 } = require("../controller/VacencyController");
 const { isCompany } = require("../controller/UserController");
 const router = require('express').Router()
@@ -32,6 +33,7 @@ router.get('/get-user-applied-vacancies', isUserAuthenticated, getUserAppliedVac
 
 router.put(`/update/:jobId`,vacancyUpload.single('image'), updateVacancy)
 
+router.get('/getvacanciesofcompany/:employerId', getVacancyOfACompany)
 
 
 

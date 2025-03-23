@@ -26,6 +26,7 @@ import AboutPage from './Pages/About'
 import PrivacyPolicyPage from './Pages/PrivacyStatements'
 import Terms from './Pages/Terms'
 import ContactPage from './Pages/ContactPage'
+import CompanyDetail from './Pages/CompanyDetails'
 
 const MyRoutes = () => {
     return (
@@ -44,6 +45,8 @@ const MyRoutes = () => {
                     <Route path='jobs' element={<JobsPage />} />
                     <Route path='jobs/:id' element={<JobDetailsPage />} />
                     <Route path='company' element={<Companies />} />
+                    <Route path="/companies/:id" element={<CompanyDetail />} /> {/* Dynamic route for company details */}
+
 
                     <Route path='contact' element = {<ContactPage/>}/>
 
