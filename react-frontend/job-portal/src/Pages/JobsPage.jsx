@@ -5,7 +5,7 @@ import { API } from '../config';
 
 
 
-const JobsPage = () => {
+const JobsPage = ({location}) => {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
@@ -25,7 +25,13 @@ const JobsPage = () => {
   return (
     <div className='bg-gray-100 p-8 min-h-screen'>
       <div className='text-center max-w-6xl mx-auto'>
-        <h2 className='text-4xl text-red-400 font-bold mb-6'>Job Listings</h2>
+        <h2 className='text-4xl text-red-400 font-bold mb-6'>
+          {location ? <>
+          "Recently Posted Jobs"
+          </>:
+          "Job Listings"
+          }
+          </h2>
         <p className='text-gray-600 mb-12'>Explore the latest job opportunities from top companies.</p>
         <div className='grid gap-6 lg:grid-cols-3 md:grid-cols-2'>
           {jobs.map((job) => (

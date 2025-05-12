@@ -145,7 +145,7 @@ exports.UserSignUp = async (req, res) => {
 
     // Call the sendEmailToUser function to send the email
     // sendEmailToUser("noreply@jobportal.com", email, "Verification Email", textContent, htmlContent)
-    sendEmailToUser("k1shor.mkar@gmail.com", email, "Verification Email", textContent, htmlContent)
+    sendEmailToUser("info@indexithub.com", email, "Verification Email", textContent, htmlContent)
 
 
     // Example usage:
@@ -651,22 +651,23 @@ exports.uploadProfilePicture = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     console.log(req.body);
-    const { first_name, last_name, date_of_birth, gender, password, bio, phone, education, experience, company } = req.body;
+    const { skills, first_name, last_name, date_of_birth, gender, password, bio, phone, education, experience, company } = req.body;
 
     let token = await req.headers.authorization;
     token = await token.split(" ")[1];
     const { _id } = jwt.verify(token, process.env.SECRET_KEY);
     let user = await UserModel.findById(_id);
 
-    user.first_name = first_name  ? first_name : user.first_name;
-    user.last_name =  last_name ? last_name : user.last_name;
+   
     user.first_name = first_name ? first_name : user.first_name;
     user.last_name = last_name ? last_name : user.last_name;
     user.date_of_birth = date_of_birth ? date_of_birth : user.date_of_birth;
     user.gender = gender ? gender : user.gender;
     user.bio = bio ? bio : user.bio;
     user.phone = phone ? phone : user.phone;
-    user.company = company ? company : user.company
+    user.company = company ? company : user.company;
+        user.skills = skills? JSON.parse(skills) : user.skills;
+    
 
     if (req.file) {
         if (user.profile_picture) {

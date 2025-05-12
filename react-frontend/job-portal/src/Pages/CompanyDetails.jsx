@@ -62,7 +62,7 @@ const CompanyDetail = () => {
                     ) : (
                         <ul className="space-y-4">
                             {jobs.map((job) => (
-                                <li key={job._id} className="bg-white p-6 pt-8 rounded-xl shadow-lg hover:shadow-xl transition">
+                                <li key={job._id} className="bg-white p-6 pt-8 npm rounded-xl shadow-lg hover:shadow-xl transition">
                                     <h4 className="text-xl font-semibold text-gray-800">{job.title}</h4>
                                     <p className="text-gray-600">Location: {job.location}</p>
                                     <p className="text-gray-600">Salary: Rs.{job.salary}</p>

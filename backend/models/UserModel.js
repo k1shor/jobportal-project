@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const {ObjectId} = mongoose.Schema
 
 const UserSchema = new mongoose.Schema({
-    first_name: { type: String, required: true },
-    last_name: { type: String, required: true },
+    first_name: { type: String,  },
+    last_name: { type: String,  },
     company: { type: String },
     phone: { type: String },
     bio: { type: String },
@@ -55,6 +56,10 @@ const UserSchema = new mongoose.Schema({
         position: { type: String, required: true },
         company: { type: String, required: true },
         year: { type: Number, required: true }
+    }],
+    skills: [{
+        type: ObjectId,
+        ref: "Skill"
     }]
 }, { timestamps: true });
 

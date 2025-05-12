@@ -10,6 +10,7 @@ const morgan = require('morgan')
 const UserRoute = require('./routes/UserRoutes')
 const vacancyRoute = require('./routes/vacancyRoutes');
 const ApplicationRoutes = require('./routes/ApplicationRoutes')
+const SkillRoutes = require("./routes/skillRoutes")
  
 
 
@@ -25,6 +26,8 @@ app.use(morgan('dev'))
 app.use(UserRoute)
 app.use('/vacancy', vacancyRoute);
 app.use('/application',ApplicationRoutes)
+app.use("/api/skills", SkillRoutes );
+
 
 app.use('/profile', express.static(path.join(__dirname, 'public/profile'), {
     setHeaders: (res, path) => {

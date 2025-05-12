@@ -2,7 +2,7 @@ import React from "react";
 import { API } from "../../config";
 
 const Overview = ({ user }) => {
-    const {  fullName, phone, email, profile_picture, date_of_birth, gender, bio, education, experience } = user;
+    const {  first_name, last_name, fullName, phone, email, profile_picture, date_of_birth, gender, bio, education, experience } = user;
     // const username = user.username?user.fullName : ""
     // const phone = user.phone?user.phone: ""
     // const profile_picture = user.phone?user.phone: ""
@@ -19,7 +19,7 @@ const Overview = ({ user }) => {
             <div className="flex items-center mb-4">
                 <img src={`${API}/${profile_picture}`} alt="Profile" className="w-52 h-52 rounded-full mr-4 border-2 border-red-400" />
                 <div>
-                    <h3 className="text-3xl font-semibold text-gray-900">{fullName}</h3>
+                    <h3 className="text-3xl font-semibold text-gray-900">{first_name} {last_name}</h3>
                     <p className="text-gray-600 text-xl font-semibold">{gender} | {date_of_birth.toString().split('T')[0]}</p>
                 </div>
             </div>
